@@ -29,6 +29,11 @@ export default {
 }
 
 .avatar-container.size-small .avatar {
+  height: 44px;
+  font-size: 22px;
+}
+
+.avatar-container.size-default .avatar {
   height: 56px;
   font-size: 24px;
 }

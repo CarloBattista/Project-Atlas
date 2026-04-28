@@ -1,13 +1,22 @@
 <template>
   <button :type="type" class="tl-button" :class="['size-' + size, 'variant-' + variant]" :disabled="disabled">
     <span v-if="loading" class="loader"></span>
-    <span v-if="!loading && label" class="label-button font-medium">{{ label }}</span>
+    <component v-if="leftIcon" :is="leftIcon" class="icon-button left-icon" />
+    <span v-if="!loading && label" class="label-button font-medium whitespace-nowrap">{{ label }}</span>
+    <component v-if="rightIcon" :is="rightIcon" class="icon-button right-icon" />
   </button>
 </template>
 
 <script>
+// ICONS
+import { Plus } from '@lucide/vue';
+
 export default {
   name: 'tl-button',
+  components: {
+    // ICONS
+    Plus,
+  },
   props: {
     type: {
       type: String,
@@ -21,10 +30,12 @@ export default {
       type: String,
       default: 'primary',
     },
+    leftIcon: String,
     label: {
       type: String,
       default: 'Button',
     },
+    rightIcon: String,
     loading: {
       type: Boolean,
       default: false,

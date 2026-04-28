@@ -30,7 +30,7 @@ export default {
   props: {
     variant: {
       type: String,
-      default: 'green',
+      default: 'black',
       validator: (value) => ['green', 'black', 'white'].includes(value),
     },
   },

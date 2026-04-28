@@ -1,7 +1,7 @@
 <template>
   <div class="fixed z-9999 top-0 left-0 w-fit h-6 m-4">
     <RouterLink to="/">
-      <appLogo variant="black" class="h-full" />
+      <appLogo class="h-full" />
     </RouterLink>
   </div>
   <main class="w-full md:pt-[10%] pt-[15%] px-4 sm:max-w-[400px] mx-auto">
