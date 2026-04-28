@@ -5,9 +5,21 @@ const APP_TITLE = 'Project Atlas';
 const routes = [
   // Auth
   {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('../views/Onboarding/Signup.vue'),
+    props: true,
+  },
+  {
     path: '/signin',
     name: 'signin',
     component: () => import('../views/Onboarding/Signin.vue'),
+    props: true,
+  },
+  {
+    path: '/confirm-email',
+    name: 'confirm-email',
+    component: () => import('../views/Onboarding/Confirm-email.vue'),
     props: true,
   },
 

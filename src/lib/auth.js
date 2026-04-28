@@ -25,7 +25,8 @@ export async function getAuthUser() {
     if (data?.user) {
       auth.user = data.user;
       auth.isAuthenticated = true;
-      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('isAuthenticated', true);
+
       await getSession();
       await getProfile();
     } else {
