@@ -9,7 +9,6 @@ function clearAuth() {
   auth.userLoading = false;
   auth.profileLoading = false;
   localStorage.removeItem('isAuthenticated');
-  localStorage.removeItem('private_key');
 }
 
 export async function getAuthUser() {
