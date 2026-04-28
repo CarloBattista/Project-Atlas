@@ -11,6 +11,16 @@ function clearAuth() {
   localStorage.removeItem('isAuthenticated');
 }
 
+function checkProfileStatus() {
+  if (!auth.profile) return;
+
+  if (!auth.profile?.first_name || !auth.profile?.last_name) {
+    auth.profile_not_completed = true;
+  } else {
+    auth.profile_not_completed = false;
+  }
+}
+
 export async function getAuthUser() {
   auth.userLoading = true;
 
@@ -66,6 +76,7 @@ export async function getProfile() {
     if (error) throw error;
 
     auth.profile = data;
+    checkProfileStatus();
   } catch (e) {
     console.error(e);
   } finally {

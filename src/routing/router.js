@@ -19,6 +19,13 @@ const routes = [
     meta: { requiresGuest: true },
   },
   {
+    path: '/complete-profile',
+    name: 'complete-profile',
+    component: () => import('../views/Onboarding/Complete-profile.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/confirm-email',
     name: 'confirm-email',
     component: () => import('../views/Onboarding/Confirm-email.vue'),
