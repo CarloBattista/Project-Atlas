@@ -9,12 +9,14 @@ const routes = [
     name: 'signup',
     component: () => import('../views/Onboarding/Signup.vue'),
     props: true,
+    meta: { requiresGuest: true },
   },
   {
     path: '/signin',
     name: 'signin',
     component: () => import('../views/Onboarding/Signin.vue'),
     props: true,
+    meta: { requiresGuest: true },
   },
   {
     path: '/confirm-email',
@@ -29,6 +31,7 @@ const routes = [
     name: 'home',
     component: () => import('../views/Home.vue'),
     props: true,
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -38,13 +41,23 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated');
+  const authParsed = JSON.parse(isAuthenticated);
+
   const pageTitle = to.meta.title;
-  if (pageTitle) {
-    document.title = pageTitle;
+  document.title = pageTitle ? pageTitle : APP_TITLE;
+
+  // Logica Middleware/Guard
+  if (to.meta.requiresAuth && !authParsed) {
+    // Se la rotta richiede auth e l'utente non è autenticato -> redirect a signin
+    next({ name: 'signin' });
+  } else if (to.meta.requiresGuest && authParsed) {
+    // Se la rotta è per guest e l'utente è autenticato -> redirect a home
+    next({ name: 'home' });
   } else {
-    document.title = APP_TITLE;
+    // Altrimenti procedi normalmente
+    next();
   }
-  next();
 });
 
 export default router;
