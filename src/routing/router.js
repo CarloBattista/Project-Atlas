@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-const APP_TITLE = 'Project Atlas';
+const APP_TITLE = 'Atlas';
 
 const routes = [
   // Auth
