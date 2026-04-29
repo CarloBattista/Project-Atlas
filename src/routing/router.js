@@ -40,6 +40,15 @@ const routes = [
     props: true,
     meta: { requiresAuth: true },
   },
+
+  // Invoice
+  {
+    path: '/upload-invoice',
+    name: 'upload-invoice',
+    component: () => import('../views/Invoice/Upload-invoice.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({

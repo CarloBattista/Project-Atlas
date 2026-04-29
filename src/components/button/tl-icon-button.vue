@@ -75,16 +75,33 @@ export default {
   height: 28px;
 }
 
+.tl-icon-button.size-extra-small .icon-button {
+  height: 16px;
+}
+
 .tl-icon-button.size-small {
   height: 36px;
+}
+
+.tl-icon-button.size-small .icon-button {
+  height: 20px;
 }
 
 .tl-icon-button.size-default {
   height: 44px;
 }
 
+.tl-icon-button.size-default .icon-button {
+  height: 24px;
+}
+
 .tl-icon-button.size-large {
   height: 56px;
+}
+
+.tl-icon-button.size-large .icon-button {
+  width: 30px;
+  height: 30px;
 }
 
 /* VARIANTS */

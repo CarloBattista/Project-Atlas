@@ -11,4 +11,21 @@ export const store = reactive({
   sidebarOptions: {
     isCollapsed: true,
   },
+
+  modals: {
+    newInvoice: {
+      isOpen: false,
+      data: {
+        file: {
+          selectedFile: null,
+          error: null,
+          loading: false,
+          loadingStatus: '',
+          progress: 0,
+        },
+      },
+      errors: {},
+      loading: false,
+    },
+  },
 });
