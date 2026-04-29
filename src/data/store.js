@@ -23,9 +23,7 @@ export const store = reactive({
           loadingStatus: '',
           progress: 0,
           invoiceAnalysis: null,
-        },
-        analysisType: {
-          selected: '',
+          analysisType: null, // 'local' o 'ai'
         },
         supplier_name: '',
         supplier_number: '',

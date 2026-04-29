@@ -9,7 +9,10 @@
       >
         <!-- HEAD -->
         <div class="w-full flex items-center">
-          <h2 v-if="head" class="text-black text-xl font-semibold">{{ head }}</h2>
+          <div class="flex gap-2 items-center">
+            <slot name="back" />
+            <h2 v-if="head" class="text-black text-xl font-semibold">{{ head }}</h2>
+          </div>
           <tlIconButton v-if="closable" @click="store.modals[modalKey].isOpen = false" size="extra-small" icon="X" class="ml-auto" />
         </div>
 

@@ -7,13 +7,15 @@
 
 <script>
 // ICONS
-import { X } from '@lucide/vue';
+import { X, ChevronLeft, ChevronRight } from '@lucide/vue';
 
 export default {
   name: 'tl-icon-button',
   components: {
     // ICONS
     X,
+    ChevronLeft,
+    ChevronRight,
   },
   props: {
     type: {

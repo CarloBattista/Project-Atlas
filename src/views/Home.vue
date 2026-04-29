@@ -4,21 +4,64 @@
     <div class="w-full flex items-center">
       <h1 v-if="auth.profile" class="text-black text-2xl font-semibold">Bentornato, {{ auth.profile?.first_name }}!</h1>
       <div class="ml-auto flex gap-2 items-center">
-        <tlButton @click="store.modals.newInvoice.isOpen = true" size="small" variant="tertiary" leftIcon="Plus" label="Nuova fattura" />
+        <tlButton @click="openNewInvoiceModal" size="small" variant="tertiary" leftIcon="Plus" label="Nuova fattura" />
       </div>
     </div>
   </mainView>
-  <modal modalKey="newInvoice" head="Nuova fattura">
+  <modal modalKey="newInvoice" :head="newInvoiceHead" :actions="store.modals.newInvoice.data.file.analysisType">
+    <template #back>
+      <tlIconButton
+        v-if="store.modals.newInvoice.data.file.analysisType"
+        @click="store.modals.newInvoice.data.file.analysisType = null"
+        size="extra-small"
+        icon="ChevronLeft"
+      />
+    </template>
     <template #body>
-      <div v-if="!store.modals.newInvoice.data.file.invoiceAnalysis" class="w-full">
+      <!-- Step 0: Scelta tipo analisi -->
+      <div v-if="!store.modals.newInvoice.data.file.analysisType" class="w-full flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-4">
+          <button
+            @click="store.modals.newInvoice.data.file.analysisType = 'local'"
+            class="flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-gray-100 hover:border-black hover:bg-black/5 transition-all text-left cursor-pointer"
+          >
+            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+              <Cpu :size="24" />
+            </div>
+            <div class="text-center">
+              <p class="font-semibold text-gray-900">Analisi Locale</p>
+              <p class="text-xs text-gray-500 mt-1">Veloce e privata, elaborata sul tuo browser.</p>
+            </div>
+          </button>
+
+          <button
+            @click="store.modals.newInvoice.data.file.analysisType = 'ai'"
+            class="flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-gray-100 hover:border-black hover:bg-black/5 transition-all text-left cursor-pointer"
+          >
+            <div class="p-3 bg-purple-50 text-purple-600 rounded-lg">
+              <Zap :size="24" />
+            </div>
+            <div class="text-center">
+              <p class="font-semibold text-gray-900">Analisi AI</p>
+              <p class="text-xs text-gray-500 mt-1">Massima precisione grazie all'intelligenza artificiale.</p>
+            </div>
+          </button>
+        </div>
+      </div>
+      <!-- Step 1: Caricamento File -->
+      <div v-else-if="!store.modals.newInvoice.data.file.invoiceAnalysis" class="w-full">
         <tlInputFile v-model="store.modals.newInvoice.data.file.selectedFile" accepts=".pdf" />
         <div class="mt-6 flex flex-col gap-4">
           <div v-if="store.modals.newInvoice.data.file.error" class="p-3 bg-red-50 text-red-700 text-sm rounded-lg border border-red-100">
             {{ store.modals.newInvoice.data.file.error }}
           </div>
           <progressBar v-if="store.modals.newInvoice.data.file.loading" :progress="store.modals.newInvoice.data.file.progress" />
+          <p v-if="store.modals.newInvoice.data.file.loading" class="text-center text-xs text-gray-500">
+            {{ store.modals.newInvoice.data.file.loadingStatus }}
+          </p>
         </div>
       </div>
+      <!-- Step 2: Risultati -->
       <div v-else-if="store.modals.newInvoice.data.file.invoiceAnalysis" class="w-full flex flex-col gap-4">
         <div class="w-full flex gap-2 items-center">
           <tlInput v-model="store.modals.newInvoice.data.supplier_number" label="Numero di fattura" class="w-full" />
@@ -36,10 +79,11 @@
     </template>
     <template #actions>
       <tlButton
+        v-if="store.modals.newInvoice.data.file.analysisType"
         @click="processInvoice"
         class="w-full"
         label="Analizza fattura"
-        :loading="loading"
+        :loading="store.modals.newInvoice.data.file.loading"
         :disabled="!store.modals.newInvoice.data.file.selectedFile || store.modals.newInvoice.data.file.loading"
       />
     </template>
@@ -49,15 +93,20 @@
 <script>
 import { auth } from '../data/auth';
 import { store } from '../data/store';
-import { analyzeInvoice } from '../utils/invoiceParser';
+import { analyzeInvoice, extractTextFromPDF } from '../utils/invoiceParser';
+import { aiService } from '../utils/aiService';
 
 import sidebar from '../components/navigation/sidebar.vue';
 import mainView from '../components/global/main-view.vue';
 import tlInput from '../components/input/tl-input.vue';
 import tlButton from '../components/button/tl-button.vue';
+import tlIconButton from '../components/button/tl-icon-button.vue';
 import modal from '../components/modal/modal.vue';
 import tlInputFile from '../components/input/tl-input-file.vue';
 import progressBar from '../components/progress/progress-bar.vue';
+
+// ICONS
+import { Cpu, Zap } from '@lucide/vue';
 
 export default {
   name: 'Home',
@@ -66,9 +115,12 @@ export default {
     mainView,
     tlInput,
     tlButton,
+    tlIconButton,
     modal,
     tlInputFile,
     progressBar,
+    Cpu,
+    Zap,
   },
   data() {
     return {
@@ -76,7 +128,37 @@ export default {
       store,
     };
   },
+  computed: {
+    newInvoiceHead() {
+      if (!this.store.modals.newInvoice.data.file.analysisType) {
+        return 'Scegli metodo di analisi file';
+      }
+
+      return 'Analizza fattura';
+    },
+  },
   methods: {
+    openNewInvoiceModal() {
+      // Reset dei dati della modale
+      const modal = this.store.modals.newInvoice;
+      modal.data.file.selectedFile = null;
+      modal.data.file.invoiceAnalysis = null;
+      modal.data.file.analysisType = null;
+      modal.data.file.error = null;
+      modal.data.file.loading = false;
+      modal.data.file.progress = 0;
+      modal.data.file.loadingStatus = '';
+
+      // Reset campi dati
+      modal.data.supplier_name = '';
+      modal.data.supplier_number = '';
+      modal.data.amount = '0';
+      modal.data.currency = 'EUR';
+      modal.data.invoice_date = new Date().toISOString().split('T')[0];
+      modal.data.due_date = new Date().toISOString().split('T')[0];
+
+      modal.isOpen = true;
+    },
     async processInvoice() {
       const modalData = this.store.modals.newInvoice.data;
       const key = modalData.file;
@@ -89,23 +171,46 @@ export default {
       key.progress = 0;
 
       try {
-        key.loadingStatus = 'Lettura PDF...';
-        key.progress = 20;
+        if (modalData.file.analysisType === 'local') {
+          key.loadingStatus = 'Lettura PDF...';
+          key.progress = 20;
 
-        // Analisi reale del file
-        const analysisResults = await analyzeInvoice(key.selectedFile.file);
+          // Analisi reale del file (Locale)
+          const analysisResults = await analyzeInvoice(key.selectedFile.file);
 
-        key.loadingStatus = 'Estrazione dati...';
-        key.progress = 60;
-        await new Promise((r) => setTimeout(r, 500)); // Breve attesa per UX
+          key.loadingStatus = 'Estrazione dati...';
+          key.progress = 60;
+          await new Promise((r) => setTimeout(r, 500));
 
-        // Popoliamo i campi dello store con i risultati
-        modalData.supplier_name = analysisResults.supplier_name;
-        modalData.supplier_number = analysisResults.supplier_number;
-        modalData.amount = analysisResults.amount;
-        modalData.currency = analysisResults.currency;
-        modalData.invoice_date = analysisResults.invoice_date;
-        modalData.due_date = analysisResults.due_date;
+          modalData.supplier_name = analysisResults.supplier_name;
+          modalData.supplier_number = analysisResults.supplier_number;
+          modalData.amount = analysisResults.amount;
+          modalData.currency = analysisResults.currency;
+          modalData.invoice_date = analysisResults.invoice_date;
+          modalData.due_date = analysisResults.due_date;
+        } else {
+          // Analisi AI Reale
+          key.loadingStatus = 'Lettura PDF...';
+          key.progress = 10;
+          const textContent = await extractTextFromPDF(key.selectedFile.file);
+
+          key.loadingStatus = 'Analisi neurale in corso...';
+          key.progress = 40;
+
+          // Chiamata al servizio AI
+          const analysisResults = await aiService.analyzeInvoiceWithAI(textContent);
+
+          key.loadingStatus = 'Riconoscimento pattern...';
+          key.progress = 80;
+          await new Promise((r) => setTimeout(r, 500));
+
+          modalData.supplier_name = analysisResults.supplier_name || 'Fornitore non trovato';
+          modalData.supplier_number = analysisResults.supplier_number || '';
+          modalData.amount = analysisResults.amount || '0';
+          modalData.currency = analysisResults.currency || 'EUR';
+          modalData.invoice_date = analysisResults.invoice_date || new Date().toISOString().split('T')[0];
+          modalData.due_date = analysisResults.due_date || modalData.invoice_date;
+        }
 
         key.loadingStatus = 'Completato!';
         key.progress = 100;
