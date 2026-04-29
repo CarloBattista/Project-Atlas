@@ -9,6 +9,6 @@ export const store = reactive({
     isMobile: false,
   },
   sidebarOptions: {
-    isCollapsed: false,
+    isCollapsed: true,
   },
 });

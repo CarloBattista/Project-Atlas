@@ -81,6 +81,10 @@ export default {
   border-radius: 10px;
 }
 
+.tl-button.size-small .icon-button {
+  height: 18px;
+}
+
 .tl-button.size-default,
 .tl-button.size-large {
   font-size: 16px;
@@ -89,8 +93,16 @@ export default {
   border-radius: 12px;
 }
 
+.tl-button.size-default .icon-button {
+  height: 22px;
+}
+
 .tl-button.size-large {
   height: 56px;
+}
+
+.tl-button.size-large .icon-button {
+  height: 24px;
 }
 
 /* VARIANTS */

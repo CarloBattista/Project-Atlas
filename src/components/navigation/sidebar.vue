@@ -1,10 +1,15 @@
 <template>
-  <div class="sidebar md:px-4 md:py-8 px-2 py-4 border-r border-black/5 bg-[#f2f2f2]" :class="{ collapsed: store.sidebarOptions.isCollapsed }">
+  <div
+    @mouseenter="store.sidebarOptions.isCollapsed = false"
+    @mouseleave="store.sidebarOptions.isCollapsed = true"
+    class="sidebar px-3 py-4 border-r border-black/5 bg-[#f2f2f2]"
+    :class="{ collapsed: store.sidebarOptions.isCollapsed }"
+  >
     <div class="w-full h-full flex flex-col">
       <!-- HEAD -->
       <div class="w-full flex items-center">
         <RouterLink to="/">
-          <appLogo class="h-6" />
+          <appLogo type="symbol" class="w-11 h-11" />
         </RouterLink>
       </div>
       <!-- BODY -->
@@ -21,13 +26,15 @@
 
       <!-- FOOTER -->
       <div class="w-full">
-        <tlButton leftIcon="Plus" label="Add new invoice" class="w-full mb-6" />
-        <div class="w-full flex gap-3 items-center">
+        <!-- <tlButton leftIcon="Plus" label="Add new invoice" class="w-full mb-6" /> -->
+        <div class="w-full flex gap-3 items-center overflow-hidden">
           <tlAvatar size="small" fallback="c" />
-          <div v-if="!store.sidebarOptions.isCollapsed" class="h-full flex flex-col">
-            <h2 class="text-black text-sm font-medium max-one-line">{{ auth.profile?.first_name }} {{ auth.profile?.last_name }}</h2>
-            <p v-if="auth.user?.email" class="text-gray-500 text-xs font-normal max-one-line">{{ auth.user?.email }}</p>
-          </div>
+          <Transition name="slide-fade">
+            <div v-if="!store.sidebarOptions.isCollapsed" class="h-full flex flex-col">
+              <h2 class="text-black text-sm font-medium max-one-line">{{ auth.profile?.first_name }} {{ auth.profile?.last_name }}</h2>
+              <p v-if="auth.user?.email" class="text-gray-500 text-xs font-normal max-one-line">{{ auth.user?.email }}</p>
+            </div>
+          </Transition>
         </div>
       </div>
     </div>
@@ -39,7 +46,6 @@ import { auth } from '../../data/auth';
 import { store } from '../../data/store';
 
 import appLogo from '../global/app-logo.vue';
-import tlButton from '../button/tl-button.vue';
 import tlAvatar from '../avatar/tl-avatar.vue';
 
 // ICONS
@@ -49,7 +55,6 @@ export default {
   name: 'sidebar',
   components: {
     appLogo,
-    tlButton,
     tlAvatar,
 
     // ICONS
@@ -87,7 +92,7 @@ export default {
   background-color: transparent;
   color: #626262;
   height: 44px;
-  padding: 0 16px;
+  padding: 0 12px;
   border-radius: 12px;
   display: flex;
   gap: 8px;
