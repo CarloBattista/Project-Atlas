@@ -35,5 +35,11 @@ export const store = reactive({
       errors: {},
       loading: false,
     },
+    invoice: {
+      isOpen: false,
+      data: {},
+      errors: {},
+      loading: false,
+    },
   },
 });

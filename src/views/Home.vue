@@ -164,6 +164,12 @@
       />
     </template>
   </modal>
+  <modal modalKey="invoice" :head="datadb.invoice?.data.supplier_name" :actions="true">
+    <template #body>
+      <code>{{ datadb.invoice?.data }}</code>
+    </template>
+    <template #actions></template>
+  </modal>
 </template>
 
 <script>
@@ -265,6 +271,8 @@ export default {
       if (!invoiceId) return;
 
       await getInvoiceById(invoiceId);
+      this.store.modals.invoice.isOpen = true;
+      this.$router.push({ query: { invoice: invoiceId } });
     },
     async processInvoice() {
       const modalData = this.store.modals.newInvoice.data;
