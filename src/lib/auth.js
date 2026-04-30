@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { auth } from '../data/auth';
-import { getInvoices } from './functions';
+import { getInvoices } from '../api/invoices';
 
 function clearAuth() {
   auth.user = null;

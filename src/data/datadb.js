@@ -6,4 +6,9 @@ export const datadb = reactive({
     error: null,
     loading: false,
   },
+  invoice: {
+    data: {},
+    error: null,
+    loading: false,
+  },
 });

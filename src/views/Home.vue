@@ -60,7 +60,7 @@
             <span class="text-[#656565] text-xs font-medium">({{ datadb.invoices.data?.length }})</span>
           </div>
           <div class="w-full flex flex-col gap-1">
-            <cardRow v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">
+            <cardRow @click="handleInvoice(invoice.id)" v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
                 <tlAvatar size="small" :fallback="invoice?.supplier_name.charAt(0)" />
                 <div class="h-full lg:flex hidden flex-col">
@@ -172,6 +172,7 @@ import { store } from '../data/store';
 import { datadb } from '../data/datadb';
 import { analyzeInvoice, extractTextFromPDF } from '../utils/invoiceParser';
 import { aiService } from '../utils/aiService';
+import { getInvoiceById } from '../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../utils/format';
 
 import sidebar from '../components/navigation/sidebar.vue';
@@ -260,6 +261,11 @@ export default {
       modal.isOpen = true;
     },
 
+    async handleInvoice(invoiceId) {
+      if (!invoiceId) return;
+
+      await getInvoiceById(invoiceId);
+    },
     async processInvoice() {
       const modalData = this.store.modals.newInvoice.data;
       const key = modalData.file;
