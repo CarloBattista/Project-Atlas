@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { auth } from '../data/auth';
+import { getInvoices } from './functions';
 
 function clearAuth() {
   auth.user = null;
@@ -77,6 +78,7 @@ export async function getProfile() {
 
     auth.profile = data;
     checkProfileStatus();
+    await getInvoices();
   } catch (e) {
     console.error(e);
   } finally {

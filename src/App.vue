@@ -8,7 +8,6 @@
 import { auth } from './data/auth';
 import { getAuthUser } from './lib/auth';
 import { store } from './data/store';
-import { getInvoices } from './lib/functions';
 
 export default {
   name: 'App',
@@ -37,7 +36,6 @@ export default {
     this.handleResize();
 
     await getAuthUser();
-    await getInvoices();
   },
   beforeMounted() {
     window.removeEventListener('resize', this.handleResize);

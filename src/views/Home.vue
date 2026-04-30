@@ -9,14 +9,47 @@
     </div>
 
     <div class="w-full mt-8 flex flex-col gap-6">
-      <shelf>
+      <shelf v-if="false">
         <div class="w-full h-full flex flex-col gap-2.5">
           <div class="w-full flex gap-2 items-center">
             <ChartLine size="20" />
             <span class="text-black text-base font-medium">Analytics</span>
             <span v-if="false" class="text-[#656565] text-xs font-medium">(10)</span>
           </div>
-          <!-- <div class="w-full flex"></div> -->
+          <div class="w-full grid gap-2 lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
+            <cardInfo
+              firstLabel="Total Members"
+              head="3 Clients"
+              description="All registered users"
+              icon="Zap"
+              bottomLabel="98% from last month"
+              class="w-full"
+            />
+            <cardInfo
+              firstLabel="Total Members"
+              head="3 Clients"
+              description="All registered users"
+              icon="Zap"
+              bottomLabel="98% from last month"
+              class="w-full"
+            />
+            <cardInfo
+              firstLabel="Total Members"
+              head="3 Clients"
+              description="All registered users"
+              icon="Clock4"
+              bottomLabel="98% from last month"
+              class="w-full"
+            />
+            <cardInfo
+              firstLabel="Total Members"
+              head="3 Clients"
+              description="All registered users"
+              icon="Clock4"
+              bottomLabel="98% from last month"
+              class="w-full"
+            />
+          </div>
         </div>
       </shelf>
       <shelf v-if="datadb.invoices.data">
@@ -150,6 +183,7 @@ import modal from '../components/modal/modal.vue';
 import tlInputFile from '../components/input/tl-input-file.vue';
 import progressBar from '../components/progress/progress-bar.vue';
 import shelf from '../components/shelf/shelf.vue';
+import cardInfo from '../components/card/card-info.vue';
 import cardRow from '../components/card/card-row.vue';
 import tlAvatar from '../components/avatar/tl-avatar.vue';
 import chip from '../components/chip/chip.vue';
@@ -170,6 +204,7 @@ export default {
     tlInputFile,
     progressBar,
     shelf,
+    cardInfo,
     cardRow,
     tlAvatar,
     chip,
