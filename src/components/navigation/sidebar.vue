@@ -1,19 +1,21 @@
 <template>
-  <div
-    @mouseenter="store.sidebarOptions.isCollapsed = false"
-    @mouseleave="store.sidebarOptions.isCollapsed = true"
-    class="sidebar px-3 py-4 border-r border-black/5 bg-[#f2f2f2]"
-    :class="{ collapsed: store.sidebarOptions.isCollapsed }"
-  >
+  <div class="sidebar border-r border-black/5 bg-[#f2f2f2]" :class="{ collapsed: store.sidebarOptions.isCollapsed }">
     <div class="w-full h-full flex flex-col">
       <!-- HEAD -->
-      <div class="w-full flex items-center">
-        <RouterLink to="/">
+      <div class="logo-container relative w-full flex items-center">
+        <RouterLink to="/" class="appLogo">
           <appLogo type="symbol" class="w-11 h-11" />
         </RouterLink>
+        <div
+          @click="store.sidebarOptions.isCollapsed = !store.sidebarOptions.isCollapsed"
+          class="menu-toggle ml-auto"
+          :class="{ 'menu-collapsed': store.sidebarOptions.isCollapsed }"
+        >
+          <PanelLeftClose />
+        </div>
       </div>
       <!-- BODY -->
-      <div class="w-full h-full pt-8 flex flex-col gap-1">
+      <div class="w-full h-full py-8 flex flex-col gap-1">
         <RouterLink to="/" class="nav-item">
           <div class="nav-icon">
             <LayoutDashboard size="22" />
@@ -22,11 +24,34 @@
             <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Dashboard</span>
           </Transition>
         </RouterLink>
+        <RouterLink to="/invoices" class="nav-item">
+          <div class="nav-icon">
+            <Files size="22" />
+          </div>
+          <Transition name="slide-fade">
+            <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Invoices</span>
+          </Transition>
+        </RouterLink>
+        <RouterLink to="/clients" class="nav-item">
+          <div class="nav-icon">
+            <UsersRound size="22" />
+          </div>
+          <Transition name="slide-fade">
+            <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Clients</span>
+          </Transition>
+        </RouterLink>
+        <RouterLink to="/analytics" class="nav-item">
+          <div class="nav-icon">
+            <ChartLine size="22" />
+          </div>
+          <Transition name="slide-fade">
+            <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Analytics</span>
+          </Transition>
+        </RouterLink>
       </div>
 
       <!-- FOOTER -->
       <div class="w-full">
-        <!-- <tlButton leftIcon="Plus" label="Add new invoice" class="w-full mb-6" /> -->
         <div class="w-full flex gap-3 items-center overflow-hidden">
           <tlAvatar size="small" fallback="c" />
           <Transition name="slide-fade">
@@ -49,7 +74,7 @@ import appLogo from '../global/app-logo.vue';
 import tlAvatar from '../avatar/tl-avatar.vue';
 
 // ICONS
-import { LayoutDashboard } from '@lucide/vue';
+import { LayoutDashboard, Files, UsersRound, ChartLine, PanelLeftClose } from '@lucide/vue';
 
 export default {
   name: 'sidebar',
@@ -59,6 +84,10 @@ export default {
 
     // ICONS
     LayoutDashboard,
+    Files,
+    UsersRound,
+    ChartLine,
+    PanelLeftClose,
   },
   data() {
     return {
@@ -76,21 +105,22 @@ export default {
   left: 0;
   z-index: 9999;
   width: 240px;
-  min-width: 70px;
+  min-width: 69px;
   max-width: 240px;
   height: 100svh;
+  padding: 32px 12px;
   transition-property: width;
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .sidebar.collapsed {
-  width: 70px;
+  width: 69px;
 }
 
 .nav-item {
   background-color: transparent;
-  color: #626262;
+  color: #656565;
   height: 44px;
   padding: 0 12px;
   border-radius: 12px;
@@ -106,16 +136,19 @@ export default {
 }
 
 .nav-item.router-link-active {
-  background-color: #fff;
+  background-color: #f5f5f5;
   color: #000;
-  box-shadow: 0 0 0 1px #d4d4d4 inset;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.15) inset;
 }
 
 .nav-item:not(.router-link-active):hover {
-  background-color: #fff;
+  color: #212121;
 }
 
 .nav-icon {
+  position: relative;
+  left: -2px;
   height: 100%;
   display: flex;
   flex: none;
@@ -124,7 +157,7 @@ export default {
 }
 
 .nav-label {
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .slide-fade-enter-active,
@@ -135,5 +168,35 @@ export default {
 .slide-fade-leave-to {
   opacity: 0;
   transform: translateX(-8px);
+}
+
+.menu-toggle {
+  position: relative;
+  height: 44px;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  opacity: 0;
+  visibility: hidden;
+}
+
+.sidebar:not(.collapsed) .menu-toggle {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar.collapsed .menu-toggle {
+  position: absolute;
+  background-color: black;
+  color: white;
+}
+
+.sidebar.collapsed .logo-container:hover .menu-toggle {
+  opacity: 1;
+  visibility: visible;
 }
 </style>

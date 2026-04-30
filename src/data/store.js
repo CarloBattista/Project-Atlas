@@ -9,7 +9,7 @@ export const store = reactive({
     isMobile: false,
   },
   sidebarOptions: {
-    isCollapsed: true,
+    isCollapsed: false,
   },
 
   modals: {

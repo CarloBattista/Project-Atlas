@@ -73,6 +73,10 @@ export default {
   opacity: 0.5;
 }
 
+.icon-button {
+  flex: none;
+}
+
 /* SIZES */
 .tl-button.size-small {
   font-size: 14px;
@@ -107,7 +111,7 @@ export default {
 
 /* VARIANTS */
 .tl-button.variant-primary {
-  background-color: rgb(23, 23, 3);
+  background-color: rgb(23, 23, 23);
   color: rgb(255, 255, 255);
 }
 

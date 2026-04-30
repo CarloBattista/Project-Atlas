@@ -1,7 +1,7 @@
 <template>
   <sidebar />
   <mainView>
-    <div class="w-full flex items-center">
+    <div class="w-full h-11 flex items-center">
       <h1 v-if="auth.profile" class="text-black text-2xl font-semibold">Bentornato, {{ auth.profile?.first_name }}!</h1>
       <div class="ml-auto flex gap-2 items-center">
         <tlButton @click="openNewInvoiceModal" size="small" variant="tertiary" leftIcon="Plus" label="Nuova fattura" />
@@ -119,6 +119,8 @@ export default {
     modal,
     tlInputFile,
     progressBar,
+
+    // ICONS
     Cpu,
     Zap,
   },
@@ -159,6 +161,7 @@ export default {
 
       modal.isOpen = true;
     },
+
     async processInvoice() {
       const modalData = this.store.modals.newInvoice.data;
       const key = modalData.file;
