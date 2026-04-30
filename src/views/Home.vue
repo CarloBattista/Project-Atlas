@@ -7,6 +7,49 @@
         <tlButton @click="openNewInvoiceModal" size="small" variant="tertiary" leftIcon="Plus" label="Nuova fattura" />
       </div>
     </div>
+
+    <div class="w-full mt-8 flex flex-col gap-6">
+      <shelf>
+        <div class="w-full h-full flex flex-col gap-2.5">
+          <div class="w-full flex gap-2 items-center">
+            <ChartLine size="20" />
+            <span class="text-black text-base font-medium">Analytics</span>
+            <span v-if="false" class="text-[#656565] text-xs font-medium">(10)</span>
+          </div>
+          <!-- <div class="w-full flex"></div> -->
+        </div>
+      </shelf>
+      <shelf>
+        <div class="w-full h-full flex flex-col gap-2.5">
+          <div class="w-full flex gap-2 items-center">
+            <Files size="20" />
+            <span class="text-black text-base font-medium">Invoices</span>
+            <span class="text-[#656565] text-xs font-medium">(4)</span>
+          </div>
+          <div class="w-full flex flex-col gap-1">
+            <cardRow v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">
+              <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
+                <tlAvatar size="small" :fallback="invoice?.supplier_name.charAt(0)" />
+                <div class="h-full lg:flex hidden flex-col">
+                  <h2 class="text-black text-sm font-medium max-one-line">{{ invoice?.supplier_name }}</h2>
+                  <p v-if="false" class="text-gray-500 text-xs font-normal max-one-line">mail@gmail.com</p>
+                </div>
+              </div>
+              <div class="w-full ml-4 flex gap-2 items-center justify-between">
+                <chip :label="invoice?.supplier_number" />
+                <div class="flex items-center">
+                  <chip icon="FlagTriangleRight" :label="formatDate(invoice?.invoice_date)" />
+                  <div class="relative mx-5 w-0.5 h-5 rounded-full bg-[#EDEDED]"></div>
+                  <chip icon="Clock4" :label="formatDate(invoice?.due_date)" />
+                </div>
+                <chip :label="formatCurrency(invoice?.amount)" />
+                <badge :variant="getInvoiceStatusVariant(invoice?.status)" :label="getInvoiceStatusLabel(invoice?.status)" />
+              </div>
+            </cardRow>
+          </div>
+        </div>
+      </shelf>
+    </div>
   </mainView>
   <modal modalKey="newInvoice" :head="newInvoiceHead" :actions="store.modals.newInvoice.data.file.analysisType">
     <template #back>
@@ -93,8 +136,10 @@
 <script>
 import { auth } from '../data/auth';
 import { store } from '../data/store';
+import { datadb } from '../data/datadb';
 import { analyzeInvoice, extractTextFromPDF } from '../utils/invoiceParser';
 import { aiService } from '../utils/aiService';
+import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../utils/format';
 
 import sidebar from '../components/navigation/sidebar.vue';
 import mainView from '../components/global/main-view.vue';
@@ -104,9 +149,14 @@ import tlIconButton from '../components/button/tl-icon-button.vue';
 import modal from '../components/modal/modal.vue';
 import tlInputFile from '../components/input/tl-input-file.vue';
 import progressBar from '../components/progress/progress-bar.vue';
+import shelf from '../components/shelf/shelf.vue';
+import cardRow from '../components/card/card-row.vue';
+import tlAvatar from '../components/avatar/tl-avatar.vue';
+import chip from '../components/chip/chip.vue';
+import badge from '../components/badge/badge.vue';
 
 // ICONS
-import { Cpu, Zap } from '@lucide/vue';
+import { Cpu, Zap, ChartLine, Files } from '@lucide/vue';
 
 export default {
   name: 'Home',
@@ -119,15 +169,23 @@ export default {
     modal,
     tlInputFile,
     progressBar,
+    shelf,
+    cardRow,
+    tlAvatar,
+    chip,
+    badge,
 
     // ICONS
     Cpu,
     Zap,
+    ChartLine,
+    Files,
   },
   data() {
     return {
       auth,
       store,
+      datadb,
     };
   },
   computed: {
@@ -140,6 +198,11 @@ export default {
     },
   },
   methods: {
+    getInvoiceStatusVariant,
+    getInvoiceStatusLabel,
+    formatDate,
+    formatCurrency,
+
     openNewInvoiceModal() {
       // Reset dei dati della modale
       const modal = this.store.modals.newInvoice;

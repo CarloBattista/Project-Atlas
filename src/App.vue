@@ -8,6 +8,7 @@
 import { auth } from './data/auth';
 import { getAuthUser } from './lib/auth';
 import { store } from './data/store';
+import { getInvoices } from './lib/functions';
 
 export default {
   name: 'App',
@@ -22,6 +23,8 @@ export default {
       if (window.innerWidth <= 768) {
         this.store.windowOptions.screenSize = 'mobile';
         this.store.windowOptions.isMobile = true;
+
+        this.store.sidebarOptions.isCollapsed = true;
       } else {
         this.store.windowOptions.screenSize = 'desktop';
         this.store.windowOptions.isMobile = false;
@@ -34,6 +37,7 @@ export default {
     this.handleResize();
 
     await getAuthUser();
+    await getInvoices();
   },
   beforeMounted() {
     window.removeEventListener('resize', this.handleResize);

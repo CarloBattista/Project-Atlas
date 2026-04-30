@@ -1,6 +1,6 @@
 <template>
   <div class="badge relative w-fit px-2.5 py-0.5 rounded-full flex items-center justify-center" :class="'variant-' + variant">
-    <span class="text-sm font-medium">{{ label }}</span>
+    <span class="text-sm font-medium max-one-line">{{ label }}</span>
   </div>
 </template>
 
