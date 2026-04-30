@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { authMiddleware } from './middleware/authMiddleware';
 
 const APP_TITLE = 'Atlas';
 
@@ -56,24 +57,16 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach(authMiddleware);
+
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated');
-  const authParsed = JSON.parse(isAuthenticated);
-
   const pageTitle = to.meta.title;
-  document.title = pageTitle ? pageTitle : APP_TITLE;
-
-  // Logica Middleware/Guard
-  if (to.meta.requiresAuth && !authParsed) {
-    // Se la rotta richiede auth e l'utente non è autenticato -> redirect a signin
-    next({ name: 'signin' });
-  } else if (to.meta.requiresGuest && authParsed) {
-    // Se la rotta è per guest e l'utente è autenticato -> redirect a home
-    next({ name: 'home' });
+  if (pageTitle) {
+    document.title = pageTitle;
   } else {
-    // Altrimenti procedi normalmente
-    next();
+    document.title = APP_TITLE;
   }
+  next();
 });
 
 export default router;

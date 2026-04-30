@@ -19,12 +19,12 @@
           <!-- <div class="w-full flex"></div> -->
         </div>
       </shelf>
-      <shelf>
+      <shelf v-if="datadb.invoices.data">
         <div class="w-full h-full flex flex-col gap-2.5">
           <div class="w-full flex gap-2 items-center">
             <Files size="20" />
             <span class="text-black text-base font-medium">Invoices</span>
-            <span class="text-[#656565] text-xs font-medium">(4)</span>
+            <span class="text-[#656565] text-xs font-medium">({{ datadb.invoices.data?.length }})</span>
           </div>
           <div class="w-full flex flex-col gap-1">
             <cardRow v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">

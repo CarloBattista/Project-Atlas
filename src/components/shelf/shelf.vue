@@ -1,5 +1,5 @@
 <template>
-  <div class="shelf relative w-full p-3 rounded-4xl border border-black/5 bg-[#F2F2F2]">
+  <div class="shelf relative w-full p-3 rounded-4xl border border-black/5 shadow shadow-black/10 bg-white">
     <slot />
   </div>
 </template>
