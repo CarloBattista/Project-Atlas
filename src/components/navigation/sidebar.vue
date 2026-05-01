@@ -52,7 +52,7 @@
 
       <!-- FOOTER -->
       <div class="w-full">
-        <div class="w-full flex gap-3 items-center overflow-hidden">
+        <RouterLink to="/settings" class="w-full flex gap-3 items-center overflow-hidden cursor-pointer">
           <tlAvatar size="small" fallback="c" />
           <Transition name="slide-fade">
             <div v-if="!store.sidebarOptions.isCollapsed" class="h-full flex flex-col">
@@ -60,7 +60,7 @@
               <p v-if="auth.user?.email" class="text-gray-500 text-xs font-normal max-one-line">{{ auth.user?.email }}</p>
             </div>
           </Transition>
-        </div>
+        </RouterLink>
       </div>
     </div>
   </div>

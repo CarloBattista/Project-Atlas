@@ -50,6 +50,15 @@ const routes = [
     props: true,
     meta: { requiresAuth: true },
   },
+
+  // Settings
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('../views/Settings/Settings.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({

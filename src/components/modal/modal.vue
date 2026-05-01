@@ -17,7 +17,7 @@
         </div>
 
         <!-- BODY -->
-        <div class="relative w-full h-full overflow-y-auto">
+        <div class="relative w-full h-full min-h-[100px] overflow-y-auto">
           <slot name="body" />
         </div>
 

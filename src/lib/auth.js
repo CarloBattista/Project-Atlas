@@ -99,3 +99,35 @@ export async function logout() {
     console.error(e);
   }
 }
+
+export async function updateUserEmail(newEmail) {
+  if (!newEmail) return;
+
+  try {
+    const { data, error } = await supabase.auth.updateUser({
+      email: newEmail,
+    });
+
+    if (error) throw error;
+
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function updateUserPhone(phoneNumber) {
+  if (!phoneNumber) return;
+
+  try {
+    const { data, error } = await supabase.auth.updateUser({
+      phone: phoneNumber,
+    });
+
+    if (error) throw error;
+
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  }
+}

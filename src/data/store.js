@@ -41,5 +41,38 @@ export const store = reactive({
       errors: {},
       loading: false,
     },
+
+    fullname: {
+      isOpen: false,
+      data: {
+        first_name: '',
+        last_name: '',
+      },
+      errors: {
+        first_name: null,
+        last_name: null,
+      },
+      loading: false,
+    },
+    newEmail: {
+      isOpen: false,
+      data: {
+        email: '',
+      },
+      errors: {
+        email: null,
+      },
+      loading: false,
+    },
+    phone: {
+      isOpen: false,
+      data: {
+        phone: '',
+      },
+      errors: {
+        phone: null,
+      },
+      loading: false,
+    },
   },
 });
