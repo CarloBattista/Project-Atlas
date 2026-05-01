@@ -15,13 +15,7 @@
           :leftIcon="previewIsVisible ? 'EyeClosed' : 'Eye'"
           :label="previewIsVisible ? 'Hide Preview' : 'Show Preview'"
         />
-        <tlButton
-          @click="editMode"
-          size="small"
-          :variant="inEditMode ? 'primary' : 'tertiary'"
-          leftIcon="Pen"
-          :label="inEditMode ? 'Salva' : 'Modifica'"
-        />
+        <tlButton size="small" variant="tertiary" leftIcon="Pen" label="Modifica" />
       </div>
     </div>
     <div class="w-full h-svh mt-8 grid gap-6" :class="{ 'lg:grid-cols-2': previewIsVisible && invoice?.file_url }">
@@ -55,17 +49,10 @@ export default {
       invoice: datadb.invoice?.data,
 
       invoiceId: this.$route.params.id,
-
       previewIsVisible: true,
-      inEditMode: false,
     };
   },
   methods: {
-    editMode() {
-      this.inEditMode = !this.inEditMode;
-      this.$router.push({ query: { edit: this.inEditMode } });
-    },
-
     async getInvoice() {
       if (!this.invoiceId) return;
 
@@ -83,12 +70,6 @@ export default {
         if (value) {
           this.getInvoice();
         }
-      },
-      immediate: true,
-    },
-    '$route.query.edit': {
-      handler(value) {
-        this.inEditMode = value === 'true';
       },
       immediate: true,
     },
