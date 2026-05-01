@@ -347,8 +347,9 @@ export default {
       if (!invoiceId) return;
 
       await getInvoiceById(invoiceId);
-      this.store.modals.invoice.isOpen = true;
-      this.$router.push({ query: { invoice: invoiceId } });
+      this.$router.push({ name: 'invoice', params: { id: invoiceId } });
+      // this.store.modals.invoice.isOpen = true;
+      // this.$router.push({ query: { invoice: invoiceId } });
     },
     async handleDeleteInvoice(invoiceId) {
       if (!invoiceId) return;

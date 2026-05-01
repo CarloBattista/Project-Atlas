@@ -9,13 +9,16 @@
 
 <script>
 // ICONS
-import { Plus } from '@lucide/vue';
+import { Plus, Eye, EyeClosed, Pen } from '@lucide/vue';
 
 export default {
   name: 'tl-button',
   components: {
     // ICONS
     Plus,
+    Eye,
+    EyeClosed,
+    Pen,
   },
   props: {
     type: {
