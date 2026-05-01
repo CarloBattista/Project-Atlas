@@ -53,7 +53,7 @@
       <!-- FOOTER -->
       <div class="w-full">
         <RouterLink to="/settings" class="w-full flex gap-3 items-center overflow-hidden cursor-pointer">
-          <tlAvatar size="small" fallback="c" />
+          <tlAvatar size="small" :fallback="auth.profile?.first_name ? auth.profile?.first_name?.charAt(0) : auth.user?.email?.charAt(0)" />
           <Transition name="slide-fade">
             <div v-if="!store.sidebarOptions.isCollapsed" class="h-full flex flex-col">
               <h2 class="text-black text-sm font-medium max-one-line">{{ auth.profile?.first_name }} {{ auth.profile?.last_name }}</h2>

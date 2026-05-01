@@ -58,7 +58,7 @@
             <span class="text-black text-base font-medium">Fatture</span>
             <span class="text-[#656565] text-xs font-medium">({{ datadb.invoices.data?.length }})</span>
           </div>
-          <div class="w-full flex flex-col gap-1">
+          <div v-if="datadb.invoices?.data.length >= 1" class="w-full flex flex-col gap-1">
             <cardRow @click="handleInvoice(invoice.id)" v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
                 <tlAvatar size="small" :fallback="invoice?.supplier_name.charAt(0)" />
