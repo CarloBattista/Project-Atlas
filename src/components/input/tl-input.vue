@@ -129,6 +129,15 @@ export default {
   transition-timing-function: ease-in-out;
 }
 
+.field-container:not(.focus) .input-field::placeholder {
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+}
+
+.field-container.focus .input-field::placeholder {
+  opacity: 1;
+}
+
 .field-container.focus .input-label,
 .field-container.has-value .input-label {
   font-size: 0.75rem;
