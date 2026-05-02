@@ -4,7 +4,9 @@
     <div class="w-full h-11 flex items-center">
       <h1 v-if="auth.profile" class="text-black text-2xl font-semibold">Bentornato, {{ auth.profile?.first_name }}!</h1>
       <div class="ml-auto flex gap-2 items-center">
-        <tlButton @click="openNewInvoiceModal" size="small" variant="tertiary" leftIcon="Plus" label="Nuova fattura" />
+        <RouterLink to="/new-invoice">
+          <tlButton size="small" variant="tertiary" leftIcon="Plus" label="Nuova fattura" />
+        </RouterLink>
       </div>
     </div>
     <div class="w-full mt-8 flex flex-col gap-6">

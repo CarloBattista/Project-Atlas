@@ -48,7 +48,14 @@
             <progressBar v-if="dataInvoice.data.file.loading" :progress="dataInvoice.data.file.progress" />
             <p v-if="dataInvoice.data.file.loading" class="text-center text-xs text-gray-500">{{ dataInvoice.data.file.loadingStatus }}</p>
           </div>
-          <tlButton @click="handleContinue(steps.current, null)" variant="primary" label="Analizza" class="w-full" />
+          <tlButton @click="steps.current--" variant="secondary" label="Indietro" class="w-full mb-1" />
+          <tlButton
+            @click="handleContinue(steps.current, null)"
+            variant="primary"
+            label="Analizza"
+            :disabled="!dataInvoice.data.file.selectedFile"
+            class="w-full"
+          />
         </div>
         <div v-else-if="steps.current === 2" class="w-full mt-12 pb-20">
           <div class="w-full mb-7 flex flex-col gap-2 items-center text-center">
@@ -103,12 +110,47 @@
                 <tlInput v-model="dataInvoice.data.discount" type="number" label="Sconto" />
               </div>
             </div>
-            <!-- Gruppo 4: Altro -->
+            <!-- Gruppo 4: Note e Altro -->
             <div class="flex flex-col gap-4">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Note e Altro</h3>
               <tlInput v-model="dataInvoice.data.notes" label="Note" placeholder="Aggiungi eventuali note..." />
             </div>
-            <tlButton @click="handleSave" variant="primary" label="Salva Fattura" class="w-full mt-4" :loading="dataInvoice.loading" />
+            <!-- Gruppo 5: Item della Fattura -->
+            <div class="flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Articoli / Servizi</h3>
+                <tlButton @click="addItem" size="small" variant="tertiary" label="Aggiungi Item" />
+              </div>
+              <div v-if="dataInvoice.data.items.length === 0" class="p-8 border-2 border-dashed border-gray-200 rounded-xl text-center">
+                <p class="text-gray-400 text-sm">Nessun articolo aggiunto. Clicca su "Aggiungi Item".</p>
+              </div>
+              <div v-for="(item, index) in dataInvoice.data.items" :key="index" class="relative flex flex-col gap-4">
+                <div class="absolute -top-2 -right-2 z-10">
+                  <tlIconButton @click="removeItem(index)" icon="X" size="extra-small" class="bg-red-500! text-white! hover:bg-red-600! shadow-sm" />
+                </div>
+                <div class="w-full flex gap-2">
+                  <tlInput v-model="item.description" label="Descrizione" placeholder="Descrizione del servizio o prodotto" class="w-full" />
+                  <tlInput v-model="item.quantity" type="number" label="Quantità" @input="calculateItemAmount(index)" class="w-full max-w-[25%]" />
+                  <tlInput
+                    v-model="item.unit_cost"
+                    type="number"
+                    label="Costo Unitario"
+                    @input="calculateItemAmount(index)"
+                    class="w-full max-w-[25%]"
+                  />
+                </div>
+              </div>
+
+              <!-- Totale Riepilogo -->
+              <div class="mt-4 p-4 bg-black text-white rounded-xl flex justify-between items-center">
+                <span class="text-sm font-medium">Totale Fattura</span>
+                <span class="text-xl font-bold">{{ dataInvoice.data.amount }} {{ dataInvoice.data.currency }}</span>
+              </div>
+            </div>
+            <div class="w-full mt-4 flex flex-col gap-1">
+              <tlButton @click="steps.current--" variant="secondary" label="Indietro" class="w-full mb-1" />
+              <tlButton @click="handleSave" variant="primary" label="Salva Fattura" class="w-full" :loading="dataInvoice.loading" />
+            </div>
           </div>
         </div>
       </div>
@@ -129,6 +171,7 @@ import tlInputFile from '../../components/input/tl-input-file.vue';
 import tlInput from '../../components/input/tl-input.vue';
 import tlSelect from '../../components/input/tl-select.vue';
 import tlButton from '../../components/button/tl-button.vue';
+import tlIconButton from '../../components/button/tl-icon-button.vue';
 
 export default {
   name: 'New-invoice',
@@ -142,6 +185,7 @@ export default {
     tlInput,
     tlSelect,
     tlButton,
+    tlIconButton,
   },
   data() {
     return {
@@ -169,9 +213,10 @@ export default {
           due_date: new Date().toISOString().split('T')[0],
           bank_account_details: '',
           notes: '',
-          tax: '',
-          discount: '',
-          shipping_fee: '',
+          tax: '0',
+          discount: '0',
+          shipping_fee: '0',
+          items: [],
         },
         errors: {},
         loading: false,
@@ -179,6 +224,33 @@ export default {
     };
   },
   methods: {
+    addItem() {
+      this.dataInvoice.data.items.push({
+        description: '',
+        quantity: 1,
+        unit_cost: 0,
+        amount: 0,
+      });
+    },
+    removeItem(index) {
+      this.dataInvoice.data.items.splice(index, 1);
+      this.updateTotalAmount();
+    },
+    calculateItemAmount(index) {
+      const item = this.dataInvoice.data.items[index];
+      item.amount = (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_cost) || 0);
+      this.updateTotalAmount();
+    },
+    updateTotalAmount() {
+      const itemsTotal = this.dataInvoice.data.items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+      const taxPercent = parseFloat(this.dataInvoice.data.tax) || 0;
+      const shipping = parseFloat(this.dataInvoice.data.shipping_fee) || 0;
+      const discount = parseFloat(this.dataInvoice.data.discount) || 0;
+
+      const taxAmount = (itemsTotal * taxPercent) / 100;
+
+      this.dataInvoice.data.amount = (itemsTotal + taxAmount + shipping - discount).toFixed(2);
+    },
     handleContinue(currentStep, analysisMode) {
       const stepSelectionMode = 0;
       const stepAnalysisiInvoice = 1;
@@ -189,6 +261,16 @@ export default {
       } else if (currentStep === stepAnalysisiInvoice) {
         this.processInvoice();
       }
+    },
+    handleSave() {
+      this.dataInvoice.loading = true;
+      // Simulazione salvataggio
+      console.log('Salvataggio fattura:', this.dataInvoice.data);
+
+      setTimeout(() => {
+        this.dataInvoice.loading = false;
+        this.$router.push('/');
+      }, 1500);
     },
 
     async processInvoice() {
@@ -222,6 +304,7 @@ export default {
           this.dataInvoice.data.shipping_fee = analysisResults.shipping_fee || '0';
           this.dataInvoice.data.bank_account_details = analysisResults.bank_account_details || '';
           this.dataInvoice.data.notes = analysisResults.notes || '';
+          this.dataInvoice.data.items = analysisResults.items || [];
         } else {
           // Analisi AI Reale
           this.dataInvoice.data.file.loadingStatus = 'Lettura PDF...';
@@ -249,6 +332,7 @@ export default {
           this.dataInvoice.data.shipping_fee = analysisResults.shipping_fee || '0';
           this.dataInvoice.data.bank_account_details = analysisResults.bank_account_details || '';
           this.dataInvoice.data.notes = analysisResults.notes || '';
+          this.dataInvoice.data.items = analysisResults.items || [];
         }
 
         this.dataInvoice.data.file.loadingStatus = 'Completato!';
@@ -265,17 +349,6 @@ export default {
       } finally {
         this.dataInvoice.loading = false;
       }
-    },
-
-    handleSave() {
-      this.dataInvoice.loading = true;
-      // Simulazione salvataggio
-      console.log('Salvataggio fattura:', this.dataInvoice.data);
-
-      setTimeout(() => {
-        this.dataInvoice.loading = false;
-        this.$router.push('/');
-      }, 1500);
     },
   },
 };
