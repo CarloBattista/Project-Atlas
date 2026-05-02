@@ -20,7 +20,7 @@
     </div>
     <div
       v-if="!invoice.loading && !invoice.error"
-      class="w-full h-svh mt-8 grid gap-6"
+      class="w-full min-h-svh mt-8 grid gap-6"
       :class="{ 'lg:grid-cols-2': previewIsVisible && invoice.data?.file_url }"
     >
       <div class="w-full h-full p-2.5 rounded-[18px] border border-black/5 bg-[#F5F5F5]"></div>

@@ -8,24 +8,24 @@
       <div class="w-full max-w-[560px] mx-auto flex flex-col gap-6">
         <div class="w-full flex flex-col">
           <div class="w-full h-10 px-3 flex items-center text-base font-medium">Account</div>
-          <div class="w-full p-0.5 rounded-xl flex flex-col gap-0.5 bg-[#F2F2F2]">
-            <cardMini @click="handleOpenFullnameModal" iconContext="UserRound" label="Nome" :rightLabel="labelFullname" />
-            <cardMini @click="handleOpenEmailModal" iconContext="Mail" label="Email" :rightLabel="auth.user?.email" />
-            <cardMini @click="handleOpenPhoneModal" iconContext="Smartphone" label="Numero di telefono" :rightLabel="labelPhone" />
-          </div>
+          <listContainer>
+            <listItem @click="handleOpenFullnameModal" iconContext="UserRound" label="Nome" :rightLabel="labelFullname" />
+            <listItem @click="handleOpenEmailModal" iconContext="Mail" label="Email" :rightLabel="labelEmail" />
+            <listItem @click="handleOpenPhoneModal" iconContext="Smartphone" label="Numero di telefono" :rightLabel="labelPhone" />
+          </listContainer>
         </div>
         <div class="w-full flex flex-col">
           <div class="w-full h-10 px-3 flex items-center text-base font-medium">Sicurezza</div>
-          <div class="w-full p-0.5 rounded-xl flex flex-col gap-0.5 bg-[#F2F2F2]">
-            <cardMini iconContext="Bell" label="Notifiche" />
-            <cardMini iconContext="MonitorSmartphone" label="Attività di accesso" />
-          </div>
+          <listContainer>
+            <listItem iconContext="Bell" label="Notifiche" />
+            <listItem iconContext="MonitorSmartphone" label="Attività di accesso" />
+          </listContainer>
         </div>
         <div class="w-full flex flex-col">
           <div class="w-full h-10 px-3 flex items-center text-base font-medium">Assistenza</div>
-          <div class="w-full p-0.5 rounded-xl flex flex-col gap-0.5 bg-[#F2F2F2]">
-            <cardMini iconContext="MessageCircleQuestionMark" label="Ricevi assistenza" rightIcon="SquareArrowOutUpRight" />
-          </div>
+          <listContainer>
+            <listItem iconContext="MessageCircleQuestionMark" label="Ricevi assistenza" rightIcon="SquareArrowOutUpRight" />
+          </listContainer>
         </div>
         <div class="w-full flex gap-2 items-center">
           <tlButton @click="handleLogout" size="small" variant="tertiary" label="Esci" />
@@ -122,7 +122,8 @@ import { updateProfileName } from '../../api/profiles';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
-import cardMini from '../../components/card/card-mini.vue';
+import listContainer from '../../components/list/list-container.vue';
+import listItem from '../../components/list/list-item.vue';
 import tlButton from '../../components/button/tl-button.vue';
 import tlInput from '../../components/input/tl-input.vue';
 import modal from '../../components/modal/modal.vue';
@@ -132,7 +133,8 @@ export default {
   components: {
     sidebar,
     mainView,
-    cardMini,
+    listContainer,
+    listItem,
     tlButton,
     tlInput,
     modal,
