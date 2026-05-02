@@ -17,9 +17,9 @@
           </div>
           <div class="w-full grid gap-2 lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
             <cardInfo
-              firstLabel="Total Members"
-              head="3 Clients"
-              description="All registered users"
+              firstLabel="Total Invoices"
+              :head="datadb.invoices.data?.length + ' ' + 'Invoices'"
+              description=""
               icon="Zap"
               bottomLabel="98% from last month"
               class="w-full"
@@ -171,81 +171,6 @@
       />
     </template>
   </modal>
-  <modal modalKey="invoice" :head="datadb.invoice?.data?.supplier_name" :actions="true">
-    <template #body>
-      <div class="flex flex-col gap-6">
-        <!-- 🔝 SUMMARY -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <p class="text-sm text-gray-500">Numero fattura</p>
-            <p class="text-base font-medium">
-              {{ datadb.invoice?.data?.supplier_number || '-' }}
-            </p>
-          </div>
-
-          <div>
-            <p class="text-sm text-gray-500">Importo</p>
-            <p class="text-lg font-semibold">
-              {{ formatCurrency(datadb.invoice?.data?.amount) }}
-            </p>
-          </div>
-
-          <div>
-            <p class="text-sm text-gray-500">Stato</p>
-            <badge :variant="getInvoiceStatusVariant(datadb.invoice?.data?.status)" :label="getInvoiceStatusLabel(datadb.invoice?.data?.status)" />
-          </div>
-        </div>
-        <!-- 📅 DATE -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="p-4 rounded-xl border border-gray-200">
-            <p class="text-sm text-gray-500">Data fattura</p>
-            <p class="text-sm font-medium">
-              {{ formatDate(datadb.invoice?.data?.invoice_date) }}
-            </p>
-          </div>
-
-          <div class="p-4 rounded-xl border border-gray-200">
-            <p class="text-sm text-gray-500">Scadenza</p>
-            <p class="text-sm font-medium">
-              {{ formatDate(datadb.invoice?.data?.due_date) }}
-            </p>
-          </div>
-        </div>
-        <!-- 🏢 INFO FORNITORE -->
-        <div class="p-4 rounded-xl border border-gray-200 flex items-center gap-3">
-          <tlAvatar size="medium" :fallback="datadb.invoice?.data?.supplier_name?.charAt(0)" />
-          <div>
-            <p class="text-sm text-gray-500">Fornitore</p>
-            <p class="text-sm font-medium">
-              {{ datadb.invoice?.data?.supplier_name }}
-            </p>
-          </div>
-        </div>
-        <!-- 🧾 DEBUG (temporaneo) -->
-        <details class="text-xs text-gray-400">
-          <summary class="cursor-pointer">Debug JSON</summary>
-          <code class="block mt-2">
-            {{ datadb.invoice?.data }}
-          </code>
-        </details>
-      </div>
-    </template>
-
-    <template #actions>
-      <div class="flex justify-between w-full">
-        <tlButton @click="handleDeleteInvoice(datadb.invoice?.data?.id)" size="small" variant="destructive" label="Elimina" />
-        <div class="flex gap-2">
-          <tlButton
-            v-if="datadb.invoice.data.status !== 'paid'"
-            @click="handleMarkInvoiceAsPaid(datadb.invoice?.data?.id)"
-            size="small"
-            variant="primary"
-            label="Segna come pagata"
-          />
-        </div>
-      </div>
-    </template>
-  </modal>
 </template>
 
 <script>
@@ -324,8 +249,8 @@ export default {
     async handleInvoice(invoiceId) {
       if (!invoiceId) return;
 
-      await getInvoiceById(invoiceId);
       this.$router.push({ name: 'invoice', params: { id: invoiceId } });
+      await getInvoiceById(invoiceId);
     },
     async processInvoice() {
       const modalData = this.store.modals.newInvoice.data;
