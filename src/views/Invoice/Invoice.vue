@@ -6,7 +6,7 @@
         <tlIconButton size="extra-small" icon="ChevronLeft" class="mr-2" />
       </RouterLink>
       <h1 class="text-black text-2xl font-semibold max-one-line">{{ invoice.data?.supplier_name }}</h1>
-      <div class="ml-auto flex gap-2 items-center">
+      <div v-if="!store.windowOptions.isMobile" class="ml-auto flex gap-2 items-center">
         <tlButton
           v-if="invoice.data?.file_url"
           @click="previewIsVisible = !previewIsVisible"
@@ -23,12 +23,47 @@
           leftIcon="BanknoteArrowUp"
           label="Segna come pagata"
         />
+        <tlButton
+          v-if="invoice.data?.status === 'paid'"
+          @click="handleMarkInvoiceAsUnpaid(invoice.data?.id)"
+          size="small"
+          leftIcon="BanknoteX"
+          label="Segna come non pagata"
+        />
+      </div>
+      <div v-else-if="store.windowOptions.isMobile" class="ml-auto">
+        <dropdown>
+          <template #trigger>
+            <tlIconButton size="small" icon="EllipsisVertical" />
+          </template>
+          <template #options>
+            <dropdownItem
+              v-if="invoice.data?.file_url"
+              @click="previewIsVisible = !previewIsVisible"
+              :icon="previewIsVisible ? 'EyeClosed' : 'Eye'"
+              :label="previewIsVisible ? 'Nascondi Anteprima' : 'Mostra Anteprima'"
+            />
+            <dropdownItem icon="Pen" label="Modifica" />
+            <dropdownItem
+              v-if="invoice.data?.status !== 'paid'"
+              @click="handleMarkInvoiceAsPaid(invoice.data?.id)"
+              icon="BanknoteArrowUp"
+              label="Segna come pagata"
+            />
+            <dropdownItem
+              v-if="invoice.data?.status === 'paid'"
+              @click="handleMarkInvoiceAsUnpaid(invoice.data?.id)"
+              icon="BanknoteX"
+              label="Segna come non pagata"
+            />
+          </template>
+        </dropdown>
       </div>
     </div>
 
     <div
       v-if="!invoice.loading && !invoice.error"
-      class="w-full min-h-svh mt-8 grid gap-6 pb-12"
+      class="w-full mt-8 grid gap-6 pb-12"
       :class="{ 'lg:grid-cols-2': previewIsVisible && invoice.data?.file_url }"
     >
       <div class="w-full flex flex-col gap-6">
@@ -126,11 +161,12 @@
           </div>
         </div>
       </div>
+      <!-- RIGHT COLUMN: PDF Preview -->
       <div
         v-if="previewIsVisible && invoice.data?.file_url"
-        class="w-full h-[calc(100vh-120px)] p-2 rounded-[18px] border border-black/5 bg-[#F5F5F5] lg:sticky lg:top-8"
+        class="w-full h-[calc(100vh-120px)] lg:sticky lg:top-8 rounded-[24px] border border-black/5 overflow-hidden"
       >
-        <iframe :src="invoice.data?.file_url" frameborder="0" class="w-full h-full rounded-[12px]"></iframe>
+        <iframe :src="invoice.data?.file_url" frameborder="0" class="w-full h-full"></iframe>
       </div>
     </div>
 
@@ -150,7 +186,8 @@
 
 <script>
 import { datadb } from '../../data/datadb';
-import { getInvoices, getInvoiceById, markInvoiceAsPaidById } from '../../api/invoices';
+import { store } from '../../data/store';
+import { getInvoices, getInvoiceById, markInvoiceAsPaidById, markInvoiceAsUnpaidById } from '../../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../../utils/format';
 
 import sidebar from '../../components/navigation/sidebar.vue';
@@ -158,6 +195,8 @@ import mainView from '../../components/global/main-view.vue';
 import loader from '../../components/global/loader.vue';
 import tlButton from '../../components/button/tl-button.vue';
 import tlIconButton from '../../components/button/tl-icon-button.vue';
+import dropdown from '../../components/dropdown/dropdown.vue';
+import dropdownItem from '../../components/dropdown/dropdown-item.vue';
 import badge from '../../components/badge/badge.vue';
 
 // ICONS
@@ -171,7 +210,10 @@ export default {
     loader,
     tlButton,
     tlIconButton,
+    dropdown,
+    dropdownItem,
     badge,
+
     // ICONS
     Calendar,
     Clock4,
@@ -181,6 +223,7 @@ export default {
   },
   data() {
     return {
+      store,
       invoice: datadb.invoice,
 
       invoiceId: this.$route.params.id,
@@ -203,6 +246,7 @@ export default {
     formatCurrency,
     getInvoiceStatusVariant,
     getInvoiceStatusLabel,
+
     async getInvoice() {
       if (!this.invoiceId) return;
 
@@ -219,6 +263,14 @@ export default {
 
       if (confirm('Sei sicuro di voler segnalare questa fattura come pagata?')) {
         await markInvoiceAsPaidById(invoiceId);
+        await this.getInvoice();
+      }
+    },
+    async handleMarkInvoiceAsUnpaid(invoiceId) {
+      if (!invoiceId) return;
+
+      if (confirm('Sei sicuro di voler segnalare questa fattura come non pagata?')) {
+        await markInvoiceAsUnpaidById(invoiceId);
         await this.getInvoice();
       }
     },
