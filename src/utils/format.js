@@ -4,6 +4,8 @@ export function getInvoiceStatusVariant(status) {
       return 'warning';
     case 'paid':
       return 'success';
+    case 'overdue':
+      return 'danger';
     default:
       return 'danger';
   }
@@ -15,6 +17,8 @@ export function getInvoiceStatusLabel(status) {
       return 'In attesa';
     case 'paid':
       return 'Pagata';
+    case 'overdue':
+      return 'Scaduta';
     default:
       return 'Non pagata';
   }

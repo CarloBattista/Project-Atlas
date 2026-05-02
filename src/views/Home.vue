@@ -254,7 +254,7 @@ import { store } from '../data/store';
 import { datadb } from '../data/datadb';
 import { analyzeInvoice, extractTextFromPDF } from '../utils/invoiceParser';
 import { aiService } from '../utils/aiService';
-import { getInvoices, getInvoiceById, deleteInvoiceById, markInvoiceAsPaidById } from '../api/invoices';
+import { getInvoiceById } from '../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../utils/format';
 
 import sidebar from '../components/navigation/sidebar.vue';
@@ -321,53 +321,11 @@ export default {
     formatDate,
     formatCurrency,
 
-    openNewInvoiceModal() {
-      // Reset dei dati della modale
-      const modal = this.store.modals.newInvoice;
-      modal.data.file.selectedFile = null;
-      modal.data.file.invoiceAnalysis = null;
-      modal.data.file.analysisType = null;
-      modal.data.file.error = null;
-      modal.data.file.loading = false;
-      modal.data.file.progress = 0;
-      modal.data.file.loadingStatus = '';
-
-      // Reset campi dati
-      modal.data.supplier_name = '';
-      modal.data.supplier_number = '';
-      modal.data.amount = '0';
-      modal.data.currency = 'EUR';
-      modal.data.invoice_date = new Date().toISOString().split('T')[0];
-      modal.data.due_date = new Date().toISOString().split('T')[0];
-
-      modal.isOpen = true;
-    },
-
     async handleInvoice(invoiceId) {
       if (!invoiceId) return;
 
       await getInvoiceById(invoiceId);
       this.$router.push({ name: 'invoice', params: { id: invoiceId } });
-      // this.store.modals.invoice.isOpen = true;
-      // this.$router.push({ query: { invoice: invoiceId } });
-    },
-    async handleDeleteInvoice(invoiceId) {
-      if (!invoiceId) return;
-
-      if (confirm('Sei sicuro di voler eliminare la fattura?')) {
-        await deleteInvoiceById(invoiceId);
-        await getInvoices();
-        this.store.modals.invoice.isOpen = false;
-        this.store.modals.invoice.data = null;
-        this.$router.push({ query: {} });
-      }
-    },
-    async handleMarkInvoiceAsPaid(invoiceId) {
-      if (!invoiceId) return;
-
-      await markInvoiceAsPaidById(invoiceId);
-      await getInvoices();
-      await getInvoiceById(invoiceId);
     },
     async processInvoice() {
       const modalData = this.store.modals.newInvoice.data;

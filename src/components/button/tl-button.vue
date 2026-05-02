@@ -9,7 +9,7 @@
 
 <script>
 // ICONS
-import { Plus, Eye, EyeClosed, Pen } from '@lucide/vue';
+import { Plus, Eye, EyeClosed, Pen, BanknoteArrowUp } from '@lucide/vue';
 
 export default {
   name: 'tl-button',
@@ -19,6 +19,7 @@ export default {
     Eye,
     EyeClosed,
     Pen,
+    BanknoteArrowUp,
   },
   props: {
     type: {
