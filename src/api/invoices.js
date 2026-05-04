@@ -96,3 +96,18 @@ export async function markInvoiceAsPendingById(invoiceId) {
     console.error(e);
   }
 }
+
+export async function updateInvoiceItem(itemId, updates) {
+  if (!itemId) return;
+
+  try {
+    const { data, error } = await supabase.from('invoice_items').update(updates).eq('id', itemId);
+
+    if (error) throw error;
+
+    return { data, error: null };
+  } catch (e) {
+    console.error(e);
+    return { data: null, error: e };
+  }
+}

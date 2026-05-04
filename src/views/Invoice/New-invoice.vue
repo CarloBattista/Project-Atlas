@@ -228,7 +228,7 @@ export default {
       this.dataInvoice.data.items.push({
         description: '',
         quantity: 1,
-        unit_cost: 0,
+        unit_cost: 1,
         amount: 0,
       });
     },
@@ -354,4 +354,16 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+</style>

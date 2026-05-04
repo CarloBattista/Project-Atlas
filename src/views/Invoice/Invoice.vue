@@ -202,18 +202,65 @@
           </div>
         </div>
 
-        <!-- Invoice Items -->
         <div v-if="invoice.data?.invoice_items?.length" class="flex flex-col gap-4">
           <h3 class="text-lg font-semibold text-black px-1">Articoli</h3>
           <div class="flex flex-col gap-1">
-            <div v-for="item in invoice.data.invoice_items" :key="item.id" class="p-4 rounded-[20px] border border-black/5 bg-white flex flex-col">
-              <div class="flex gap-2 items-center justify-between">
-                <span class="text-black text-sm font-semibold max-one-line">{{ item.description }}</span>
-                <div class="flex gap-1 items-center">
-                  <span class="text-black text-sm font-bold">{{ formatCurrency(item.amount) }}</span>
+            <div
+              v-for="item in invoice.data.invoice_items"
+              :key="item.id"
+              class="p-4 rounded-[20px] border border-black/5 bg-white flex flex-col gap-2"
+            >
+              <div class="flex gap-2 items-start justify-between">
+                <div v-if="editingItem.id !== item.id" class="flex flex-col flex-1">
+                  <span class="text-black text-sm font-semibold max-one-line">{{ item.description }}</span>
+                  <span class="text-[#212121]/50 text-xs">{{ item.quantity }} x {{ formatCurrency(item.unit_cost) }}</span>
+                </div>
+                <div v-else class="flex flex-col gap-2 flex-1">
+                  <input
+                    v-model="editingItem.description"
+                    type="text"
+                    class="w-full text-sm font-semibold border-b border-black/10 outline-none pb-1"
+                    placeholder="Descrizione"
+                  />
+                  <div class="flex gap-2">
+                    <div class="flex flex-col gap-1 flex-1">
+                      <span class="text-[10px] uppercase text-[#212121]/50">Quantità</span>
+                      <input v-model="editingItem.quantity" type="number" class="w-full text-xs border-b border-black/10 outline-none pb-1" />
+                    </div>
+                    <div class="flex flex-col gap-1 flex-1">
+                      <span class="text-[10px] uppercase text-[#212121]/50">Costo Unitario</span>
+                      <input
+                        v-model="editingItem.unit_cost"
+                        type="number"
+                        step="0.01"
+                        class="w-full text-xs border-b border-black/10 outline-none pb-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex gap-2 items-center">
+                  <div v-if="editingItem.id !== item.id" class="flex flex-col items-end">
+                    <span class="text-black text-sm font-bold">{{ formatCurrency(item.amount) }}</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <div
+                      @click="editingItem.id === item.id ? handleUpdateItem() : toggleEditItem(item)"
+                      class="h-8 w-8 flex items-center justify-center cursor-pointer text-gray-500 hover:bg-black/5 rounded-full transition-colors"
+                    >
+                      <Pen v-if="editingItem.id !== item.id" size="16" />
+                      <Check v-else size="16" class="text-green-600" />
+                    </div>
+                    <div
+                      v-if="editingItem.id === item.id"
+                      @click="editingItem.id = null"
+                      class="h-8 w-8 flex items-center justify-center cursor-pointer text-gray-500 hover:bg-black/5 rounded-full transition-colors"
+                    >
+                      <X size="16" class="text-red-500" />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <span class="text-[#212121]/50 text-xs">{{ item.quantity }} x {{ formatCurrency(item.unit_cost) }}</span>
             </div>
           </div>
         </div>
@@ -224,17 +271,82 @@
             <span class="text-[#212121]/50">Imponibile</span>
             <span class="font-medium text-black">{{ formatCurrency(subtotal) }}</span>
           </div>
-          <div v-if="invoice.data?.tax" class="flex justify-between items-center text-sm">
+
+          <!-- Tax -->
+          <div class="flex justify-between items-center text-sm">
             <span class="text-[#212121]/50">IVA</span>
-            <span class="font-medium text-black">{{ invoice.data.tax }}%</span>
+            <div class="flex items-center gap-2">
+              <span v-if="!editingField.tax.editing" class="font-medium text-black">{{ invoice.data.tax || 0 }}%</span>
+              <div v-else class="flex items-center gap-1">
+                <input
+                  v-model="editingField.tax.value"
+                  type="number"
+                  class="w-16 bg-white border border-black/10 rounded px-1 text-right outline-none"
+                />
+                <span class="text-black">%</span>
+              </div>
+              <div class="flex items-center gap-1 ml-2">
+                <div @click="handleEditField('tax')" class="cursor-pointer text-gray-500 hover:text-black transition-colors">
+                  <Pen v-if="!editingField.tax.editing" size="14" />
+                  <Check v-else size="14" class="text-green-600" />
+                </div>
+                <X v-if="editingField.tax.editing" @click="editingField.tax.editing = false" size="14" class="cursor-pointer text-red-500" />
+              </div>
+            </div>
           </div>
-          <div v-if="invoice.data?.shipping_fee" class="flex justify-between items-center text-sm">
+
+          <!-- Shipping Fee -->
+          <div class="flex justify-between items-center text-sm">
             <span class="text-[#212121]/50">Spedizione</span>
-            <span class="font-medium text-black">{{ formatCurrency(invoice.data.shipping_fee) }}</span>
+            <div class="flex items-center gap-2">
+              <span v-if="!editingField.shipping_fee.editing" class="font-medium text-black">{{ formatCurrency(invoice.data.shipping_fee) }}</span>
+              <input
+                v-else
+                v-model="editingField.shipping_fee.value"
+                type="number"
+                step="0.01"
+                class="w-24 bg-white border border-black/10 rounded px-1 text-right outline-none"
+              />
+              <div class="flex items-center gap-1 ml-2">
+                <div @click="handleEditField('shipping_fee')" class="cursor-pointer text-gray-500 hover:text-black transition-colors">
+                  <Pen v-if="!editingField.shipping_fee.editing" size="14" />
+                  <Check v-else size="14" class="text-green-600" />
+                </div>
+                <X
+                  v-if="editingField.shipping_fee.editing"
+                  @click="editingField.shipping_fee.editing = false"
+                  size="14"
+                  class="cursor-pointer text-red-500"
+                />
+              </div>
+            </div>
           </div>
-          <div v-if="invoice.data?.discount" class="flex justify-between items-center text-sm text-red-500">
-            <span>Sconto</span>
-            <span class="font-medium">-{{ formatCurrency(invoice.data.discount) }}</span>
+
+          <!-- Discount -->
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-[#212121]/50">Sconto</span>
+            <div class="flex items-center gap-2">
+              <span v-if="!editingField.discount.editing" class="font-medium text-red-500">-{{ formatCurrency(invoice.data.discount) }}</span>
+              <input
+                v-else
+                v-model="editingField.discount.value"
+                type="number"
+                step="0.01"
+                class="w-24 bg-white border border-black/10 rounded px-1 text-right outline-none text-red-500"
+              />
+              <div class="flex items-center gap-1 ml-2">
+                <div @click="handleEditField('discount')" class="cursor-pointer text-gray-500 hover:text-black transition-colors">
+                  <Pen v-if="!editingField.discount.editing" size="14" />
+                  <Check v-else size="14" class="text-green-600" />
+                </div>
+                <X
+                  v-if="editingField.discount.editing"
+                  @click="editingField.discount.editing = false"
+                  size="14"
+                  class="cursor-pointer text-red-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -265,7 +377,7 @@
 import { supabase } from '../../lib/supabase';
 import { datadb } from '../../data/datadb';
 import { store } from '../../data/store';
-import { getInvoices, getInvoiceById, markInvoiceAsPaidById, markInvoiceAsUnpaidById } from '../../api/invoices';
+import { getInvoices, getInvoiceById, markInvoiceAsPaidById, markInvoiceAsUnpaidById, updateInvoiceItem } from '../../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../../utils/format';
 
 import sidebar from '../../components/navigation/sidebar.vue';
@@ -327,6 +439,24 @@ export default {
           value: '',
           editing: false,
         },
+        tax: {
+          value: 0,
+          editing: false,
+        },
+        shipping_fee: {
+          value: 0,
+          editing: false,
+        },
+        discount: {
+          value: 0,
+          editing: false,
+        },
+      },
+      editingItem: {
+        id: null,
+        description: '',
+        quantity: 0,
+        unit_cost: 0,
       },
     };
   },
@@ -346,6 +476,19 @@ export default {
     formatCurrency,
     getInvoiceStatusVariant,
     getInvoiceStatusLabel,
+
+    toggleEditItem(item) {
+      if (this.editingItem.id === item.id) {
+        this.editingItem.id = null;
+      } else {
+        this.editingItem = {
+          id: item.id,
+          description: item.description,
+          quantity: item.quantity,
+          unit_cost: item.unit_cost,
+        };
+      }
+    },
 
     async getInvoice() {
       if (!this.invoiceId) return;
@@ -374,18 +517,69 @@ export default {
         await this.getInvoice();
       }
     },
+    async handleUpdateItem() {
+      if (!this.editingItem.id) return;
+
+      const updates = {
+        description: this.editingItem.description,
+        quantity: Number(this.editingItem.quantity),
+        unit_cost: Number(this.editingItem.unit_cost),
+        amount: Number(this.editingItem.quantity) * Number(this.editingItem.unit_cost),
+      };
+
+      try {
+        const { error: itemError } = await updateInvoiceItem(this.editingItem.id, updates);
+        if (itemError) throw itemError;
+
+        // Ricalcola il totale della fattura
+        const otherItems = this.invoice.data.invoice_items.filter((item) => item.id !== this.editingItem.id);
+        const newSubtotal = otherItems.reduce((sum, item) => sum + (item.amount || 0), 0) + updates.amount;
+
+        const taxPercent = parseFloat(this.invoice.data.tax) || 0;
+        const shipping = parseFloat(this.invoice.data.shipping_fee) || 0;
+        const discount = parseFloat(this.invoice.data.discount) || 0;
+        const taxAmount = (newSubtotal * taxPercent) / 100;
+
+        const newTotalAmount = newSubtotal + taxAmount + shipping - discount;
+
+        // Aggiorna l'importo totale della fattura nel DB
+        const { error: invoiceError } = await supabase.from('invoices').update({ amount: newTotalAmount }).eq('id', this.invoiceId);
+
+        if (invoiceError) throw invoiceError;
+
+        await this.getInvoice();
+        this.editingItem.id = null;
+      } catch (e) {
+        console.error('Errore durante aggiornamento articolo o totale fattura:', e);
+      }
+    },
     async handleEditField(field) {
       if (!this.editingField[field].editing) {
         this.editingField[field].value = this.invoice.data[field];
         this.editingField[field].editing = true;
       } else {
-        const newValue = this.editingField[field].value;
+        let newValue = this.editingField[field].value;
+        const financialFields = ['tax', 'shipping_fee', 'discount'];
+
+        if (financialFields.includes(field)) {
+          newValue = Number(newValue);
+        }
 
         try {
-          const { error } = await supabase
-            .from('invoices')
-            .update({ [field]: newValue })
-            .eq('id', this.invoiceId);
+          const updates = { [field]: newValue };
+
+          // Se modifichiamo un campo finanziario, dobbiamo ricalcolare il totale
+          if (financialFields.includes(field)) {
+            const taxPercent = field === 'tax' ? newValue : parseFloat(this.invoice.data.tax) || 0;
+            const shipping = field === 'shipping_fee' ? newValue : parseFloat(this.invoice.data.shipping_fee) || 0;
+            const discount = field === 'discount' ? newValue : parseFloat(this.invoice.data.discount) || 0;
+
+            const subtotal = this.subtotal;
+            const taxAmount = (subtotal * taxPercent) / 100;
+            updates.amount = subtotal + taxAmount + shipping - discount;
+          }
+
+          const { error } = await supabase.from('invoices').update(updates).eq('id', this.invoiceId);
 
           if (error) throw error;
 
