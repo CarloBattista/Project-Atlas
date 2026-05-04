@@ -15,7 +15,6 @@
           :leftIcon="previewIsVisible ? 'EyeClosed' : 'Eye'"
           :label="previewIsVisible ? 'Nascondi Anteprima' : 'Mostra Anteprima'"
         />
-        <tlButton size="small" variant="tertiary" leftIcon="Pen" label="Modifica" />
         <tlButton
           v-if="invoice.data?.status !== 'paid'"
           @click="handleMarkInvoiceAsPaid(invoice.data?.id)"
@@ -43,7 +42,6 @@
               :icon="previewIsVisible ? 'EyeClosed' : 'Eye'"
               :label="previewIsVisible ? 'Nascondi Anteprima' : 'Mostra Anteprima'"
             />
-            <dropdownItem icon="Pen" label="Modifica" />
             <dropdownItem
               v-if="invoice.data?.status !== 'paid'"
               @click="handleMarkInvoiceAsPaid(invoice.data?.id)"
@@ -82,14 +80,48 @@
               <span class="text-[#212121]/50 text-xs font-normal">Data Emissione</span>
               <div class="flex items-center gap-2 text-sm font-medium text-black">
                 <Calendar size="16" class="text-[#212121]/50" />
-                {{ formatDate(invoice.data?.invoice_date) }}
+                <span v-if="!editingField.invoice_date.editing">{{ formatDate(invoice.data?.invoice_date) }}</span>
+                <input v-if="editingField.invoice_date.editing" v-model="editingField.invoice_date.value" type="date" class="w-full outline-0" />
+                <div class="ml-auto flex items-center">
+                  <div
+                    @click="handleEditField('invoice_date')"
+                    class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                  >
+                    <Pen v-if="!editingField.invoice_date.editing" size="18" />
+                    <Check v-else size="18" />
+                  </div>
+                  <div
+                    v-if="editingField.invoice_date.editing"
+                    @click="editingField.invoice_date.editing = false"
+                    class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                  >
+                    <X size="18" />
+                  </div>
+                </div>
               </div>
             </div>
             <div class="flex flex-col gap-1">
               <span class="text-[#212121]/50 text-xs font-normal">Data Scadenza</span>
               <div class="flex items-center gap-2 text-sm font-medium" :class="isOverdue ? 'text-red-500' : 'text-black'">
                 <Clock4 size="16" class="text-[#212121]/50" />
-                {{ formatDate(invoice.data?.due_date) }}
+                <span v-if="!editingField.due_date.editing">{{ formatDate(invoice.data?.due_date) }}</span>
+                <input v-if="editingField.due_date.editing" v-model="editingField.due_date.value" type="date" class="w-full outline-0" />
+                <div class="ml-auto flex items-center">
+                  <div
+                    @click="handleEditField('due_date')"
+                    class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                  >
+                    <Pen v-if="!editingField.due_date.editing" size="18" />
+                    <Check v-else size="18" />
+                  </div>
+                  <div
+                    v-if="editingField.due_date.editing"
+                    @click="editingField.due_date.editing = false"
+                    class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                  >
+                    <X size="18" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -103,14 +135,61 @@
                 <Hash size="14" />
                 Numero Fattura
               </div>
-              <p class="text-base font-medium text-black">{{ invoice.data?.supplier_number || 'N/D' }}</p>
+              <div class="flex items-center justify-between">
+                <p v-if="!editingField.supplier_number.editing" class="text-base font-medium text-black">
+                  {{ invoice.data?.supplier_number || 'N/D' }}
+                </p>
+                <input
+                  v-if="editingField.supplier_number.editing"
+                  v-model="editingField.supplier_number.value"
+                  type="text"
+                  class="w-full outline-0"
+                />
+                <div
+                  @click="handleEditField('supplier_number')"
+                  class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                >
+                  <Pen v-if="!editingField.supplier_number.editing" size="18" />
+                  <Check v-else size="18" />
+                </div>
+                <div
+                  v-if="editingField.supplier_number.editing"
+                  @click="editingField.supplier_number.editing = false"
+                  class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                >
+                  <X size="18" />
+                </div>
+              </div>
             </div>
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-2 text-xs font-semibold text-[#212121]/50 uppercase tracking-wider">
                 <CreditCard size="14" />
                 Dati Bancari
               </div>
-              <p class="text-base font-medium text-black whitespace-pre-wrap">{{ invoice.data?.bank_account_details || 'N/D' }}</p>
+              <div class="flex justify-between">
+                <p v-if="!editingField.bank_account_details.editing" class="text-base font-medium text-black whitespace-pre-wrap">
+                  {{ invoice.data?.bank_account_details || 'N/D' }}
+                </p>
+                <textarea
+                  v-if="editingField.bank_account_details.editing"
+                  v-model="editingField.bank_account_details.value"
+                  class="w-full outline-0 resize-none"
+                ></textarea>
+                <div
+                  @click="handleEditField('bank_account_details')"
+                  class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                >
+                  <Pen v-if="!editingField.bank_account_details.editing" size="18" />
+                  <Check v-else size="18" />
+                </div>
+                <div
+                  v-if="editingField.bank_account_details.editing"
+                  @click="editingField.bank_account_details.editing = false"
+                  class="relative h-5 aspect-square flex items-center justify-center cursor-pointer text-gray-500"
+                >
+                  <X size="18" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -127,16 +206,14 @@
         <div v-if="invoice.data?.invoice_items?.length" class="flex flex-col gap-4">
           <h3 class="text-lg font-semibold text-black px-1">Articoli</h3>
           <div class="flex flex-col gap-1">
-            <div
-              v-for="item in invoice.data.invoice_items"
-              :key="item.id"
-              class="p-4 rounded-[20px] border border-black/5 bg-white flex justify-between items-center"
-            >
-              <div class="flex flex-col gap-1">
-                <span class="text-sm font-semibold text-black">{{ item.description }}</span>
-                <span class="text-xs text-[#212121]/50">{{ item.quantity }} x {{ formatCurrency(item.unit_cost) }}</span>
+            <div v-for="item in invoice.data.invoice_items" :key="item.id" class="p-4 rounded-[20px] border border-black/5 bg-white flex flex-col">
+              <div class="flex gap-2 items-center justify-between">
+                <span class="text-black text-sm font-semibold max-one-line">{{ item.description }}</span>
+                <div class="flex gap-1 items-center">
+                  <span class="text-black text-sm font-bold">{{ formatCurrency(item.amount) }}</span>
+                </div>
               </div>
-              <span class="text-sm font-bold text-black">{{ formatCurrency(item.amount) }}</span>
+              <span class="text-[#212121]/50 text-xs">{{ item.quantity }} x {{ formatCurrency(item.unit_cost) }}</span>
             </div>
           </div>
         </div>
@@ -185,6 +262,7 @@
 </template>
 
 <script>
+import { supabase } from '../../lib/supabase';
 import { datadb } from '../../data/datadb';
 import { store } from '../../data/store';
 import { getInvoices, getInvoiceById, markInvoiceAsPaidById, markInvoiceAsUnpaidById } from '../../api/invoices';
@@ -200,7 +278,7 @@ import dropdownItem from '../../components/dropdown/dropdown-item.vue';
 import badge from '../../components/badge/badge.vue';
 
 // ICONS
-import { Calendar, Clock4, CreditCard, FileText, Hash } from '@lucide/vue';
+import { Calendar, Clock4, CreditCard, FileText, Hash, Pen, Check, X } from '@lucide/vue';
 
 export default {
   name: 'Invoice',
@@ -220,6 +298,9 @@ export default {
     CreditCard,
     FileText,
     Hash,
+    Pen,
+    Check,
+    X,
   },
   data() {
     return {
@@ -228,6 +309,25 @@ export default {
 
       invoiceId: this.$route.params.id,
       previewIsVisible: true,
+
+      editingField: {
+        invoice_date: {
+          value: '',
+          editing: false,
+        },
+        due_date: {
+          value: '',
+          editing: false,
+        },
+        supplier_number: {
+          value: '',
+          editing: false,
+        },
+        bank_account_details: {
+          value: '',
+          editing: false,
+        },
+      },
     };
   },
   computed: {
@@ -272,6 +372,28 @@ export default {
       if (confirm('Sei sicuro di voler segnalare questa fattura come non pagata?')) {
         await markInvoiceAsUnpaidById(invoiceId);
         await this.getInvoice();
+      }
+    },
+    async handleEditField(field) {
+      if (!this.editingField[field].editing) {
+        this.editingField[field].value = this.invoice.data[field];
+        this.editingField[field].editing = true;
+      } else {
+        const newValue = this.editingField[field].value;
+
+        try {
+          const { error } = await supabase
+            .from('invoices')
+            .update({ [field]: newValue })
+            .eq('id', this.invoiceId);
+
+          if (error) throw error;
+
+          await this.getInvoice();
+          this.editingField[field].editing = false;
+        } catch (e) {
+          console.error('Errore durante aggiornamento del campo:', e);
+        }
       }
     },
   },

@@ -7,7 +7,7 @@
 
 <script>
 // ICONS
-import { X, ChevronLeft, ChevronRight, PanelLeftOpen, PanelLeftClose, Plus, Minus, Download, EllipsisVertical } from '@lucide/vue';
+import { X, ChevronLeft, ChevronRight, PanelLeftOpen, PanelLeftClose, Plus, Minus, Download, EllipsisVertical, Pen } from '@lucide/vue';
 
 export default {
   name: 'tl-icon-button',
@@ -22,6 +22,7 @@ export default {
     Minus,
     Download,
     EllipsisVertical,
+    Pen,
   },
   props: {
     type: {
