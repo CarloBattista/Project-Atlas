@@ -19,35 +19,35 @@
           </div>
           <div class="w-full grid gap-2 lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
             <cardInfo
-              firstLabel="Total Invoices"
-              :head="datadb.invoices.data?.length + ' ' + 'Invoices'"
-              description=""
+              firstLabel="Fatture Totali"
+              :head="getTotalInvoicesCount(datadb.invoices.data) + ' ' + 'Fatture'"
+              description="Totale delle fatture caricate"
+              icon="Files"
+              bottomLabel="Aggiornato in tempo reale"
+              class="w-full"
+            />
+            <cardInfo
+              firstLabel="Importo Totale"
+              :head="formatCurrency(getTotalInvoicesAmount(datadb.invoices.data))"
+              description="Valore totale delle fatture"
               icon="Zap"
-              bottomLabel="98% from last month"
+              bottomLabel="IVA inclusa"
               class="w-full"
             />
             <cardInfo
-              firstLabel="Total Members"
-              head="3 Clients"
-              description="All registered users"
-              icon="Zap"
-              bottomLabel="98% from last month"
+              firstLabel="Importo Pagato"
+              :head="formatCurrency(getPaidInvoicesAmount(datadb.invoices.data))"
+              description="Totale incassato finora"
+              icon="Check"
+              bottomLabel="Fatture con stato 'Pagata'"
               class="w-full"
             />
             <cardInfo
-              firstLabel="Total Members"
-              head="3 Clients"
-              description="All registered users"
-              icon="Clock4"
-              bottomLabel="98% from last month"
-              class="w-full"
-            />
-            <cardInfo
-              firstLabel="Total Members"
-              head="3 Clients"
-              description="All registered users"
-              icon="Clock4"
-              bottomLabel="98% from last month"
+              firstLabel="Clienti Totali"
+              :head="getUniqueSuppliersCount(datadb.invoices.data) + ' ' + 'Clienti'"
+              description="Fornitori o clienti registrati"
+              icon="Users"
+              bottomLabel="Basato sui nomi fornitori"
               class="w-full"
             />
           </div>
@@ -111,6 +111,7 @@ import { store } from '../data/store';
 import { datadb } from '../data/datadb';
 import { getInvoiceById } from '../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../utils/format';
+import { getTotalInvoicesCount, getTotalInvoicesAmount, getPaidInvoicesAmount, getUniqueSuppliersCount } from '../utils/analytics';
 
 import sidebar from '../components/navigation/sidebar.vue';
 import mainView from '../components/global/main-view.vue';
@@ -165,6 +166,10 @@ export default {
     getInvoiceStatusLabel,
     formatDate,
     formatCurrency,
+    getTotalInvoicesCount,
+    getTotalInvoicesAmount,
+    getPaidInvoicesAmount,
+    getUniqueSuppliersCount,
 
     async handleInvoice(invoiceId) {
       if (!invoiceId) return;

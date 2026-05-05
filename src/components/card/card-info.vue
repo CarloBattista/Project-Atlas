@@ -19,7 +19,7 @@
 
 <script>
 // ICONS
-import { Zap, Clock4, EllipsisVertical } from '@lucide/vue';
+import { Zap, Clock4, EllipsisVertical, Files, Check, Users } from '@lucide/vue';
 
 export default {
   name: 'card-info',
@@ -28,6 +28,9 @@ export default {
     Zap,
     Clock4,
     EllipsisVertical,
+    Files,
+    Check,
+    Users,
   },
   props: {
     firstLabel: String,
