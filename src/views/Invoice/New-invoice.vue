@@ -17,11 +17,11 @@
           </div>
           <div class="w-full flex flex-col gap-4">
             <cardOption
-              @click="handleContinue(steps.current, 'ai')"
               :customIcon="true"
               :active="true"
+              class="opacity-50 cursor-not-allowed!"
               title="Analisi AI"
-              description="Massima precisione grazie all'intelligenza artificiale."
+              description="Disponibile a breve (Usa Analisi Locale)."
             >
               <template #customIcon>
                 <img src="/_resources/imgs/icon_ai.png" alt="ai mode" class="w-full h-full object-contain" />
@@ -30,6 +30,7 @@
             <cardOption
               @click="handleContinue(steps.current, 'local')"
               :customIcon="true"
+              :active="false"
               title="Analisi Locale"
               description="Veloce e privata, elaborata sul tuo browser."
             >
@@ -149,8 +150,23 @@
             </div>
             <div class="w-full mt-4 flex flex-col gap-1">
               <tlButton @click="steps.current--" variant="secondary" label="Indietro" class="w-full mb-1" />
-              <tlButton @click="handleSave" variant="primary" label="Salva Fattura" class="w-full" :loading="dataInvoice.loading" />
+              <tlButton
+                @click="handleContinue(steps.current, null)"
+                variant="primary"
+                label="Salva Fattura"
+                class="w-full"
+                :loading="dataInvoice.loading"
+              />
             </div>
+          </div>
+        </div>
+        <div v-else class="w-full mt-12">
+          <div class="w-full mb-7 flex flex-col gap-2 items-center text-center">
+            <h2 class="text-2xl font-semibold">Hai aggiunto la fattura</h2>
+            <p class="text-gray-500 text-base font-normal">La fattura è stata salvata con successo.</p>
+          </div>
+          <div class="w-full mt-4 flex flex-col gap-1">
+            <tlButton @click="goToInvoice" variant="primary" label="Vai alla fattura" class="w-full" />
           </div>
         </div>
       </div>
@@ -161,6 +177,8 @@
 <script>
 import { analyzeInvoice, extractTextFromPDF } from '../../utils/invoiceParser';
 import { aiService } from '../../utils/aiService';
+import { createInvoice } from '../../api/invoices';
+import { auth } from '../../data/auth';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -221,6 +239,7 @@ export default {
         errors: {},
         loading: false,
       },
+      newInvoiceId: null,
     };
   },
   methods: {
@@ -229,8 +248,9 @@ export default {
         description: '',
         quantity: 1,
         unit_cost: 1,
-        amount: 0,
+        amount: 1,
       });
+      this.updateTotalAmount();
     },
     removeItem(index) {
       this.dataInvoice.data.items.splice(index, 1);
@@ -254,23 +274,71 @@ export default {
     handleContinue(currentStep, analysisMode) {
       const stepSelectionMode = 0;
       const stepAnalysisiInvoice = 1;
+      const stepSummary = 2;
 
       if (currentStep === stepSelectionMode) {
         this.steps.current++;
         this.dataInvoice.data.file.analysisType = analysisMode;
       } else if (currentStep === stepAnalysisiInvoice) {
         this.processInvoice();
+      } else if (currentStep === stepSummary) {
+        this.handleSave();
       }
     },
-    handleSave() {
-      this.dataInvoice.loading = true;
-      // Simulazione salvataggio
-      console.log('Salvataggio fattura:', this.dataInvoice.data);
+    async handleSave() {
+      const profileId = auth.profile?.id;
+      if (!profileId) {
+        alert('Errore: Profilo non trovato. Per favore effettua il login.');
+        return;
+      }
 
-      setTimeout(() => {
+      this.dataInvoice.loading = true;
+
+      const invoiceData = {
+        profile_id: profileId,
+        supplier_name: this.dataInvoice.data.supplier_name,
+        supplier_number: this.dataInvoice.data.supplier_number,
+        amount: parseFloat(this.dataInvoice.data.amount),
+        currency: this.dataInvoice.data.currency,
+        invoice_date: this.dataInvoice.data.invoice_date,
+        due_date: this.dataInvoice.data.due_date,
+        bank_account_details: this.dataInvoice.data.bank_account_details,
+        notes: this.dataInvoice.data.notes,
+        tax: parseFloat(this.dataInvoice.data.tax),
+        discount: parseFloat(this.dataInvoice.data.discount),
+        shipping_fee: parseFloat(this.dataInvoice.data.shipping_fee),
+        status: 'pending',
+      };
+
+      const items = this.dataInvoice.data.items.map((item) => ({
+        description: item.description,
+        quantity: parseFloat(item.quantity),
+        unit_cost: parseFloat(item.unit_cost),
+        amount: parseFloat(item.amount),
+      }));
+
+      try {
+        const { data, error } = await createInvoice(invoiceData, items);
+
+        if (error) {
+          alert('Errore durante il salvataggio: ' + error);
+        } else {
+          this.newInvoiceId = data.id;
+          this.steps.current = 4; // Mostra lo step di successo
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Errore imprevisto durante il salvataggio.');
+      } finally {
         this.dataInvoice.loading = false;
+      }
+    },
+    goToInvoice() {
+      if (this.newInvoiceId) {
+        this.$router.push(`/invoice/${this.newInvoiceId}`);
+      } else {
         this.$router.push('/');
-      }, 1500);
+      }
     },
 
     async processInvoice() {
@@ -354,16 +422,4 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type='number'] {
-  -moz-appearance: textfield;
-}
-</style>
+<style scoped></style>

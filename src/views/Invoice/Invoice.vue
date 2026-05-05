@@ -228,7 +228,7 @@
                       <input v-model="editingItem.quantity" type="number" class="w-full text-xs border-b border-black/10 outline-none pb-1" />
                     </div>
                     <div class="flex flex-col gap-1 flex-1">
-                      <span class="text-[10px] uppercase text-[#212121]/50">Costo Unitario</span>
+                      <span class="text-[10px] uppercase text-[#212121]/50">Costo per unità</span>
                       <input
                         v-model="editingItem.unit_cost"
                         type="number"

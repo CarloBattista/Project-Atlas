@@ -41,6 +41,29 @@ export async function getInvoiceById(invoiceId) {
   }
 }
 
+export async function createInvoice(invoiceData, items) {
+  try {
+    const { data, error } = await supabase.from('invoices').insert([invoiceData]).select().single();
+
+    if (error) throw error;
+
+    if (items && items.length > 0) {
+      const itemsWithInvoiceId = items.map((item) => ({
+        ...item,
+        invoice_id: data.id,
+      }));
+      const { error: itemsError } = await supabase.from('invoice_items').insert(itemsWithInvoiceId);
+
+      if (itemsError) throw itemsError;
+    }
+
+    return { data, error: null };
+  } catch (e) {
+    console.error(e);
+    return { data: null, error: e.message };
+  }
+}
+
 export async function deleteInvoiceById(invoiceId) {
   if (!invoiceId) return;
 
