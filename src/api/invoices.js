@@ -7,7 +7,7 @@ export async function getInvoices() {
   datadb.invoices.data = [];
 
   try {
-    const { data, error } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('invoices').select('*').order('created_at', { ascending: false }).range(0, 9);
 
     if (error) throw error;
 

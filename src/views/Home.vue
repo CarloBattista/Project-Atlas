@@ -60,7 +60,14 @@
             <span class="text-black text-base font-medium">Fatture</span>
             <span class="text-[#656565] text-xs font-medium">({{ datadb.invoices.data?.length }})</span>
           </div>
-          <div v-if="datadb.invoices?.data.length >= 1" class="w-full flex flex-col gap-1">
+          <div
+            v-if="!datadb.invoices?.loading && datadb.invoices?.data.length === 0"
+            class="w-full my-14 flex flex-col items-center justify-center text-center"
+          >
+            <h2 class="text-xl font-semibold">Al momento non ci sono fatture</h2>
+            <p class="text-gray-500 text-sm font-normal mt-1">Non hai creato fatture ancora.</p>
+          </div>
+          <div v-else-if="!datadb.invoices?.loading && datadb.invoices?.data.length >= 1" class="w-full flex flex-col gap-1">
             <cardRow @click="handleInvoice(invoice.id)" v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
                 <tlAvatar size="small" :fallback="invoice?.supplier_name.charAt(0)" />
@@ -89,6 +96,9 @@
               </div>
             </cardRow>
           </div>
+          <div v-else-if="datadb.invoices?.loading" class="w-full my-14 flex items-center justify-center">
+            <loader />
+          </div>
         </div>
       </shelf>
     </div>
@@ -104,6 +114,7 @@ import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurre
 
 import sidebar from '../components/navigation/sidebar.vue';
 import mainView from '../components/global/main-view.vue';
+import loader from '../components/global/loader.vue';
 import tlButton from '../components/button/tl-button.vue';
 import shelf from '../components/shelf/shelf.vue';
 import cardInfo from '../components/card/card-info.vue';
@@ -120,6 +131,7 @@ export default {
   components: {
     sidebar,
     mainView,
+    loader,
     tlButton,
     shelf,
     cardInfo,
