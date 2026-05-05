@@ -66,6 +66,18 @@ const routes = [
     props: true,
     meta: { requiresAuth: true },
   },
+
+  // Error
+  {
+    path: '/not-found',
+    name: 'not-found',
+    component: () => import('../views/Not-found.vue'),
+    props: true,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/not-found',
+  },
 ];
 
 const router = createRouter({
