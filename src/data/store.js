@@ -74,5 +74,9 @@ export const store = reactive({
       },
       loading: false,
     },
+    notifications: {
+      isOpen: false,
+      loading: false,
+    },
   },
 });

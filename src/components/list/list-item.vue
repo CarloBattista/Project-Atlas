@@ -13,6 +13,7 @@
     <div v-if="rightSection" class="flex gap-1.5 items-center justify-end text-[#656565]">
       <span v-if="rightLabel" class="text-sm font-normal">{{ rightLabel }}</span>
       <component v-if="rightIcon" :is="rightIcon" size="18" />
+      <slot v-if="rightAction" name="rightAction" />
     </div>
   </div>
 </template>
@@ -50,6 +51,10 @@ export default {
     rightIcon: {
       type: String,
       default: 'ChevronRight',
+    },
+    rightAction: {
+      type: Boolean,
+      default: false,
     },
   },
 };

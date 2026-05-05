@@ -40,7 +40,7 @@
             <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Clients</span>
           </Transition>
         </RouterLink>
-        <RouterLink to="/analytics" class="nav-item">
+        <RouterLink v-if="false" to="/analytics" class="nav-item">
           <div class="nav-icon">
             <ChartLine size="22" />
           </div>

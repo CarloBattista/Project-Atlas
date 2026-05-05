@@ -11,14 +11,14 @@
           <listContainer>
             <listItem @click="handleOpenFullnameModal" iconContext="UserRound" label="Nome" :rightLabel="labelFullname" />
             <listItem @click="handleOpenEmailModal" iconContext="Mail" label="Email" :rightLabel="labelEmail" />
-            <listItem @click="handleOpenPhoneModal" iconContext="Smartphone" label="Numero di telefono" :rightLabel="labelPhone" />
+            <listItem v-if="false" @click="handleOpenPhoneModal" iconContext="Smartphone" label="Numero di telefono" :rightLabel="labelPhone" />
           </listContainer>
         </div>
         <div class="w-full flex flex-col">
           <div class="w-full h-10 px-3 flex items-center text-base font-medium">Sicurezza</div>
           <listContainer>
-            <listItem iconContext="Bell" label="Notifiche" />
-            <listItem iconContext="MonitorSmartphone" label="Attività di accesso" />
+            <listItem @click="handleOpenNotificationsModal" iconContext="Bell" label="Notifiche" />
+            <listItem v-if="false" iconContext="MonitorSmartphone" label="Attività di accesso" />
           </listContainer>
         </div>
         <div class="w-full flex flex-col">
@@ -112,6 +112,22 @@
       />
     </template>
   </modal>
+  <modal modalKey="notifications" head="Notifiche" :actions="false">
+    <template #body>
+      <listContainer>
+        <listItem type="big" label="Nuove fatture" description="Ricevi notifiche su nuove fatture" rightIcon="" :rightAction="true">
+          <template #rightAction>
+            <tlCheckbox />
+          </template>
+        </listItem>
+        <listItem type="big" label="Nuovo cliente" description="Ricevi notifiche su nuovi clienti" rightIcon="" :rightAction="true">
+          <template #rightAction>
+            <tlCheckbox />
+          </template>
+        </listItem>
+      </listContainer>
+    </template>
+  </modal>
 </template>
 
 <script>
@@ -122,22 +138,24 @@ import { updateProfileName } from '../../api/profiles';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
+import modal from '../../components/modal/modal.vue';
 import listContainer from '../../components/list/list-container.vue';
 import listItem from '../../components/list/list-item.vue';
 import tlButton from '../../components/button/tl-button.vue';
 import tlInput from '../../components/input/tl-input.vue';
-import modal from '../../components/modal/modal.vue';
+import tlCheckbox from '../../components/input/tl-checkbox.vue';
 
 export default {
   name: 'Settings',
   components: {
     sidebar,
     mainView,
+    modal,
     listContainer,
     listItem,
     tlButton,
     tlInput,
-    modal,
+    tlCheckbox,
   },
   data() {
     return {
@@ -153,6 +171,14 @@ export default {
         return this.auth.profile?.first_name + ' ' + this.auth.profile?.last_name;
       }
       return 'Completa';
+    },
+    labelEmail() {
+      if (!this.auth.user) return;
+
+      if (this.auth.user?.email) {
+        return this.auth.user?.email;
+      }
+      return 'Aggiungi';
     },
     labelPhone() {
       if (!this.auth.user) return;
@@ -184,6 +210,9 @@ export default {
 
       //   this.store.modals.phone.isOpen = true;
       //   this.store.modals.phone.data.phone = this.auth.user?.phone;
+    },
+    handleOpenNotificationsModal() {
+      this.store.modals.notifications.isOpen = true;
     },
 
     async handleUpdateFullname() {
