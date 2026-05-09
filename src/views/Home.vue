@@ -44,10 +44,10 @@
             />
             <cardInfo
               firstLabel="Clienti Totali"
-              :head="getUniqueSuppliersCount(datadb.invoices.data) + ' ' + 'Clienti'"
-              description="Fornitori o clienti registrati"
+              :head="(datadb.clients.data ? datadb.clients.data.length : 0) + ' ' + 'Clienti'"
+              description="Clienti registrati nel database"
               icon="Users"
-              bottomLabel="Basato sui nomi fornitori"
+              bottomLabel="Gestione clienti attiva"
               class="w-full"
             />
           </div>

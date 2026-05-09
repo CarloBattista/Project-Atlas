@@ -5,7 +5,7 @@
       class="modal-container fixed z-99999 top-0 left-0 w-full h-svh md:px-4 md:py-8 px-2 py-4 flex items-center pointer-events-none"
     >
       <div
-        class="w-full max-w-[500px] mx-auto rounded-4xl p-5 flex flex-col gap-5 justify-between bg-white shadow-2xl shadow-black/20 pointer-events-auto"
+        class="w-full h-full max-w-[500px] mx-auto rounded-4xl p-5 flex flex-col gap-5 justify-between bg-white shadow-2xl shadow-black/20 pointer-events-auto"
       >
         <!-- HEAD -->
         <div class="w-full flex items-center">

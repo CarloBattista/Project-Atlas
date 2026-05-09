@@ -58,6 +58,29 @@ const routes = [
     meta: { requiresAuth: true },
   },
 
+  // Clients
+  {
+    path: '/clients',
+    name: 'clients',
+    component: () => import('../views/Clients/Clients.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/new-client',
+    name: 'new-client',
+    component: () => import('../views/Clients/New-client.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/client/:id',
+    name: 'client',
+    component: () => import('../views/Clients/New-client.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
+
   // Settings
   {
     path: '/settings',

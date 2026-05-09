@@ -11,4 +11,14 @@ export const datadb = reactive({
     error: null,
     loading: false,
   },
+  clients: {
+    data: [],
+    error: null,
+    loading: true,
+  },
+  client: {
+    data: {},
+    error: null,
+    loading: false,
+  },
 });
