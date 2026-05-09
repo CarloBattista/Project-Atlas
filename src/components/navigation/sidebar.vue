@@ -4,7 +4,7 @@
       <!-- HEAD -->
       <div class="logo-container relative w-full flex items-center">
         <RouterLink to="/" class="appLogo">
-          <appLogo type="symbol" class="w-11 h-11" />
+          <appLogo type="rounded" class="w-11 h-11" />
         </RouterLink>
         <div
           @click="store.sidebarOptions.isCollapsed = !store.sidebarOptions.isCollapsed"
@@ -191,7 +191,7 @@ export default {
 
 .sidebar.collapsed .menu-toggle {
   position: absolute;
-  background-color: black;
+  background-color: #ff32ba;
   color: white;
 }
 

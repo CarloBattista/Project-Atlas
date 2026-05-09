@@ -1,6 +1,6 @@
 <template>
   <div class="avatar-container relative w-fit" :class="'size-' + size">
-    <div class="avatar aspect-square rounded-full flex items-center justify-center text-center overflow-hidden bg-green-500">
+    <div class="avatar aspect-square rounded-full flex items-center justify-center text-center overflow-hidden bg-[#ff32ba] text-white">
       <img v-if="image" :src="image" alt="Profile image" class="profile-image not-first:absolute z-10 top-0 left-0 w-full h-full object-cover" />
       <span v-else class="fallback-text font-medium uppercase">{{ fallback }}</span>
     </div>

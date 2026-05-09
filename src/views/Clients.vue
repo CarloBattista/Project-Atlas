@@ -30,7 +30,7 @@
           <div v-else-if="!datadb.clients.loading && datadb.clients.data.length >= 1" class="w-full flex flex-col gap-1">
             <cardRow @click="handleClient(client.id)" v-for="(client, index) in datadb.clients.data" :key="index">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
-                <tlAvatar size="small" :fallback="client.name.charAt(0)" />
+                <tlAvatar size="small" :image="client?.logo_url" :fallback="client.name.charAt(0)" />
                 <div class="h-full lg:flex hidden flex-col">
                   <h2 class="text-black text-sm font-medium max-one-line">{{ client.name }}</h2>
                   <p v-if="client.email" class="text-gray-500 text-xs font-normal max-one-line">{{ client.email }}</p>

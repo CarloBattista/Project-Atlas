@@ -32,7 +32,7 @@
         <!-- Info Card -->
         <div class="p-6 rounded-[24px] border border-black/5 bg-white flex flex-col gap-6">
           <div class="flex items-center gap-4">
-            <tlAvatar :fallback="datadb.client.data?.name?.charAt(0)" />
+            <tlAvatar :image="datadb.client.data?.logo_url" :fallback="datadb.client.data?.name?.charAt(0)" />
             <div class="flex flex-col">
               <h2 class="text-xl font-bold text-black">{{ datadb.client.data?.name }}</h2>
               <p class="text-gray-500 text-sm font-normal">{{ datadb.client.data?.company_name || 'Libero professionista' }}</p>
