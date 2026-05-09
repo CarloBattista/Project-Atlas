@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 export const datadb = reactive({
   invoices: {
     data: [],
+    totalCount: 0,
     error: null,
     loading: true,
   },
@@ -13,6 +14,7 @@ export const datadb = reactive({
   },
   clients: {
     data: [],
+    totalCount: 0,
     error: null,
     loading: true,
   },

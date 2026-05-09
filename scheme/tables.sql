@@ -27,7 +27,10 @@ create table public.invoices (
   tax numeric null,
   discount numeric not null default '0'::numeric,
   shipping_fee numeric not null default '0'::numeric,
+  client_id uuid null,
   constraint invoices_pkey primary key (id),
+  constraint invoices_supplier_number_key unique (supplier_number),
+  constraint invoices_client_id_fkey foreign KEY (client_id) references clients (id),
   constraint invoices_profile_id_fkey foreign KEY (profile_id) references profiles (id)
 ) TABLESPACE pg_default;
 

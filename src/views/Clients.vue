@@ -52,6 +52,42 @@
                 </div>
               </div>
             </cardRow>
+
+            <!-- PAGINATION -->
+            <div
+              v-if="totalPages > 1 || datadb.invoices.totalCount > 10"
+              class="w-full mt-4 flex items-center justify-between border-t border-[#EDEDED] pt-4"
+            >
+              <div class="flex items-center gap-4">
+                <span class="text-[#656565] text-sm"> Pagina {{ currentPage }} di {{ totalPages }} </span>
+                <div class="flex items-center gap-2">
+                  <span class="text-[#656565] text-sm">Mostra:</span>
+                  <select v-model="itemsPerPage" class="bg-[#F5F5F5] border-none rounded-lg text-sm px-2 py-1 outline-none cursor-pointer">
+                    <option :value="10">10</option>
+                    <option :value="15">15</option>
+                    <option :value="20">20</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex gap-2 items-center">
+                <tlButton
+                  size="small"
+                  :variant="currentPage === 1 ? 'tertiary' : 'primary'"
+                  leftIcon="ChevronLeft"
+                  label=""
+                  :disabled="currentPage === 1 || datadb.clients.loading"
+                  @click="currentPage--"
+                />
+                <tlButton
+                  size="small"
+                  :variant="currentPage === totalPages ? 'tertiary' : 'primary'"
+                  rightIcon="ChevronRight"
+                  label=""
+                  :disabled="currentPage === totalPages || datadb.clients.loading"
+                  @click="currentPage++"
+                />
+              </div>
+            </div>
           </div>
 
           <div v-else-if="datadb.clients.loading" class="w-full my-14 flex items-center justify-center">
@@ -104,7 +140,16 @@ export default {
       auth,
       store,
       datadb,
+
+      currentPage: 1,
+      itemsPerPage: 10,
     };
+  },
+  computed: {
+    totalPages() {
+      if (!this.datadb.clients.totalCount) return 0;
+      return Math.ceil(this.datadb.clients.totalCount / this.itemsPerPage);
+    },
   },
   methods: {
     formatCurrency,
@@ -115,6 +160,15 @@ export default {
       if (!clientId) return;
 
       this.$router.push({ name: 'client', params: { id: clientId } });
+    },
+  },
+  watch: {
+    currentPage() {
+      getClients(this.currentPage, this.itemsPerPage);
+    },
+    itemsPerPage() {
+      this.currentPage = 1;
+      getClients(this.currentPage, this.itemsPerPage);
     },
   },
   mounted() {

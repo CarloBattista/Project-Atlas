@@ -1,17 +1,24 @@
 import { supabase } from '../lib/supabase';
 import { datadb } from '../data/datadb';
 
-export async function getInvoices() {
+export async function getInvoices(page = 1, limit = 10) {
   datadb.invoices.loading = true;
   datadb.invoices.error = null;
-  datadb.invoices.data = [];
 
   try {
-    const { data, error } = await supabase.from('invoices').select('*').order('created_at', { ascending: false }).range(0, 9);
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    const { data, error, count } = await supabase
+      .from('invoices')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
     if (error) throw error;
 
     datadb.invoices.data = data || [];
+    datadb.invoices.totalCount = count || 0;
   } catch (e) {
     console.error(e);
     datadb.invoices.error = e.message;

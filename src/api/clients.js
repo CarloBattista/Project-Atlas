@@ -1,17 +1,24 @@
 import { supabase } from '../lib/supabase';
 import { datadb } from '../data/datadb';
 
-export async function getClients() {
+export async function getClients(page = 1, limit = 10) {
   datadb.clients.loading = true;
   datadb.clients.error = null;
-  datadb.clients.data = [];
 
   try {
-    const { data, error } = await supabase.from('clients').select('*').order('created_at', { ascending: false });
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    const { data, error, count } = await supabase
+      .from('clients')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
     if (error) throw error;
 
     datadb.clients.data = data || [];
+    datadb.clients.totalCount = count || 0;
   } catch (e) {
     console.error(e);
     datadb.clients.error = e.message;
