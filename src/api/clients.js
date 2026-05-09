@@ -28,14 +28,16 @@ export async function getClientById(clientId) {
   datadb.client.data = null;
 
   try {
-    const { data, error } = await supabase.from('clients').select('*').eq('id', clientId).single();
+    const { data, error } = await supabase.from('clients').select('*, invoices(*)').eq('id', clientId).single();
 
     if (error) throw error;
 
     datadb.client.data = data;
+    return { data, error: null };
   } catch (e) {
     console.error(e);
     datadb.client.error = e.message;
+    return { data: null, error: e.message };
   } finally {
     datadb.client.loading = false;
   }

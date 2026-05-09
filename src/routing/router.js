@@ -76,6 +76,13 @@ const routes = [
   {
     path: '/client/:id',
     name: 'client',
+    component: () => import('../views/Clients/Client.vue'),
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/client/edit/:id',
+    name: 'edit-client',
     component: () => import('../views/Clients/New-client.vue'),
     props: true,
     meta: { requiresAuth: true },

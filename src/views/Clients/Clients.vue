@@ -28,7 +28,7 @@
           </div>
 
           <div v-else-if="!datadb.clients.loading && datadb.clients.data.length >= 1" class="w-full flex flex-col gap-1">
-            <cardRow @click="editClient(client.id)" v-for="(client, index) in datadb.clients.data" :key="index">
+            <cardRow @click="viewClient(client.id)" v-for="(client, index) in datadb.clients.data" :key="index">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
                 <tlAvatar size="small" :fallback="client.name.charAt(0)" />
                 <div class="h-full lg:flex hidden flex-col">
@@ -47,7 +47,7 @@
                 <div class="flex justify-end">
                   <chip :label="formatCurrency(client.total_invoiced)" />
                 </div>
-                <div class="flex justify-end lg:flex hidden">
+                <div class="justify-end lg:flex hidden">
                   <badge :variant="client.status === 'active' ? 'success' : 'neutral'" :label="client.status" />
                 </div>
               </div>
@@ -108,7 +108,8 @@ export default {
   },
   methods: {
     formatCurrency,
-    editClient(clientId) {
+
+    viewClient(clientId) {
       this.$router.push(`/client/${clientId}`);
     },
   },
