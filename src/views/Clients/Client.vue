@@ -6,10 +6,24 @@
         <tlIconButton size="extra-small" icon="ChevronLeft" class="mr-2" />
       </RouterLink>
       <h1 class="text-black text-2xl font-semibold max-one-line">{{ datadb.client.data?.name }}</h1>
-      <div class="ml-auto flex gap-2 items-center">
+      <div v-if="!store.windowOptions.isMobile" class="ml-auto flex gap-2 items-center">
         <RouterLink :to="`/client/edit/${datadb.client.data?.id}`">
           <tlButton size="small" variant="tertiary" leftIcon="Pen" label="Modifica Cliente" />
         </RouterLink>
+        <tlButton @click="handleDelete" size="small" variant="destructive" leftIcon="Trash2" label="Elimina Cliente" />
+      </div>
+      <div v-else-if="store.windowOptions.isMobile" class="ml-auto">
+        <dropdown>
+          <template #trigger>
+            <tlIconButton size="small" icon="EllipsisVertical" />
+          </template>
+          <template #options>
+            <RouterLink :to="`/client/edit/${datadb.client.data?.id}`">
+              <dropdownItem icon="Pen" label="Modifica Cliente" />
+            </RouterLink>
+            <dropdownItem @click="handleDelete" icon="Trash2" label="Elimina Cliente" />
+          </template>
+        </dropdown>
       </div>
     </div>
 
@@ -24,7 +38,7 @@
               <p class="text-gray-500 text-sm font-normal">{{ datadb.client.data?.company_name || 'Libero professionista' }}</p>
             </div>
             <div class="ml-auto">
-              <badge :variant="getInvoiceStatusVariant(datadb.client.data?.status)" :label="getInvoiceStatusLabel(datadb.client.data?.status)" />
+              <badge :variant="getClientStatusVariant(datadb.client.data?.status)" :label="getClientStatusLabel(datadb.client.data?.status)" />
             </div>
           </div>
 
@@ -34,15 +48,15 @@
               <div class="flex flex-col gap-2 mt-2">
                 <div v-if="datadb.client.data?.email" class="flex items-center gap-2 text-sm text-black">
                   <Mail size="16" class="text-gray-400" />
-                  {{ datadb.client.data?.email }}
+                  <a href="mailto:{{ datadb.client.data?.email }}">{{ datadb.client.data?.email }}</a>
                 </div>
                 <div v-if="datadb.client.data?.phone" class="flex items-center gap-2 text-sm text-black">
                   <Phone size="16" class="text-gray-400" />
-                  {{ datadb.client.data?.phone }}
+                  <a href="tel:{{ datadb.client.data?.phone }}">{{ datadb.client.data?.phone }}</a>
                 </div>
                 <div v-if="datadb.client.data?.website" class="flex items-center gap-2 text-sm text-black">
                   <Globe size="16" class="text-gray-400" />
-                  {{ datadb.client.data?.website }}
+                  <a href="https://{{ datadb.client.data?.website }}">{{ datadb.client.data?.website }}</a>
                 </div>
               </div>
             </div>
@@ -150,7 +164,8 @@
 
 <script>
 import { datadb } from '../../data/datadb';
-import { getClientById } from '../../api/clients';
+import { store } from '../../data/store';
+import { getClientById, deleteClientById } from '../../api/clients';
 import {
   formatCurrency,
   formatDate,
@@ -163,6 +178,8 @@ import {
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
 import loader from '../../components/global/loader.vue';
+import dropdown from '../../components/dropdown/dropdown.vue';
+import dropdownItem from '../../components/dropdown/dropdown-item.vue';
 import tlButton from '../../components/button/tl-button.vue';
 import tlIconButton from '../../components/button/tl-icon-button.vue';
 import tlAvatar from '../../components/avatar/tl-avatar.vue';
@@ -180,6 +197,8 @@ export default {
     sidebar,
     mainView,
     loader,
+    dropdown,
+    dropdownItem,
     tlButton,
     tlIconButton,
     tlAvatar,
@@ -198,6 +217,7 @@ export default {
   data() {
     return {
       datadb,
+      store,
 
       clientId: this.$route.params.id,
     };
@@ -217,6 +237,17 @@ export default {
         await getClientById(this.clientId);
       } catch (error) {
         console.error(error);
+      }
+    },
+    async handleDelete() {
+      if (!confirm('Sei sicuro di voler eliminare questo cliente?')) return;
+
+      try {
+        await deleteClientById(this.clientId);
+        await this.getClient();
+        this.$router.push('/clients');
+      } catch (e) {
+        console.error(e);
       }
     },
   },
