@@ -62,7 +62,7 @@ const routes = [
   {
     path: '/clients',
     name: 'clients',
-    component: () => import('../views/Clients/Clients.vue'),
+    component: () => import('../views/Clients.vue'),
     props: true,
     meta: { requiresAuth: true },
   },

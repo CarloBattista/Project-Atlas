@@ -24,6 +24,32 @@ export function getInvoiceStatusLabel(status) {
   }
 }
 
+export function getClientStatusVariant(status) {
+  switch (status) {
+    case 'active':
+      return 'success';
+    case 'inactive':
+      return 'warning';
+    case 'blocked':
+      return 'danger';
+    default:
+      return 'danger';
+  }
+}
+
+export function getClientStatusLabel(status) {
+  switch (status) {
+    case 'active':
+      return 'Attivo';
+    case 'inactive':
+      return 'Inattivo';
+    case 'blocked':
+      return 'Bloccato';
+    default:
+      return 'Non valido';
+  }
+}
+
 export function formatDate(date) {
   if (!date) return '';
 

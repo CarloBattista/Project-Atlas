@@ -48,7 +48,7 @@
                   <chip :label="formatCurrency(client.total_invoiced)" />
                 </div>
                 <div class="justify-end lg:flex hidden">
-                  <badge :variant="client.status === 'active' ? 'success' : 'neutral'" :label="client.status" />
+                  <badge :variant="getClientStatusVariant(client.status)" :label="getClientStatusLabel(client.status)" />
                 </div>
               </div>
             </cardRow>
@@ -64,21 +64,21 @@
 </template>
 
 <script>
-import { auth } from '../../data/auth';
-import { store } from '../../data/store';
-import { datadb } from '../../data/datadb';
-import { getClients } from '../../api/clients';
-import { formatCurrency } from '../../utils/format';
+import { auth } from '../data/auth';
+import { store } from '../data/store';
+import { datadb } from '../data/datadb';
+import { getClients } from '../api/clients';
+import { formatCurrency, getClientStatusVariant, getClientStatusLabel } from '../utils/format';
 
-import sidebar from '../../components/navigation/sidebar.vue';
-import mainView from '../../components/global/main-view.vue';
-import loader from '../../components/global/loader.vue';
-import tlButton from '../../components/button/tl-button.vue';
-import shelf from '../../components/shelf/shelf.vue';
-import cardRow from '../../components/card/card-row.vue';
-import tlAvatar from '../../components/avatar/tl-avatar.vue';
-import chip from '../../components/chip/chip.vue';
-import badge from '../../components/badge/badge.vue';
+import sidebar from '../components/navigation/sidebar.vue';
+import mainView from '../components/global/main-view.vue';
+import loader from '../components/global/loader.vue';
+import tlButton from '../components/button/tl-button.vue';
+import shelf from '../components/shelf/shelf.vue';
+import cardRow from '../components/card/card-row.vue';
+import tlAvatar from '../components/avatar/tl-avatar.vue';
+import chip from '../components/chip/chip.vue';
+import badge from '../components/badge/badge.vue';
 
 // ICONS
 import { UsersRound } from '@lucide/vue';
@@ -108,6 +108,8 @@ export default {
   },
   methods: {
     formatCurrency,
+    getClientStatusVariant,
+    getClientStatusLabel,
 
     viewClient(clientId) {
       this.$router.push(`/client/${clientId}`);

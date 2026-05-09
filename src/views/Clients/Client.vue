@@ -18,13 +18,13 @@
         <!-- Info Card -->
         <div class="p-6 rounded-[24px] border border-black/5 bg-white flex flex-col gap-6">
           <div class="flex items-center gap-4">
-            <tlAvatar size="large" :fallback="datadb.client.data?.name?.charAt(0)" />
+            <tlAvatar :fallback="datadb.client.data?.name?.charAt(0)" />
             <div class="flex flex-col">
               <h2 class="text-xl font-bold text-black">{{ datadb.client.data?.name }}</h2>
               <p class="text-gray-500 text-sm font-normal">{{ datadb.client.data?.company_name || 'Libero professionista' }}</p>
             </div>
             <div class="ml-auto">
-              <badge :variant="datadb.client.data?.status === 'active' ? 'success' : 'neutral'" :label="datadb.client.data?.status" />
+              <badge :variant="getInvoiceStatusVariant(datadb.client.data?.status)" :label="getInvoiceStatusLabel(datadb.client.data?.status)" />
             </div>
           </div>
 
@@ -151,7 +151,14 @@
 <script>
 import { datadb } from '../../data/datadb';
 import { getClientById } from '../../api/clients';
-import { formatCurrency, formatDate, getInvoiceStatusVariant, getInvoiceStatusLabel } from '../../utils/format';
+import {
+  formatCurrency,
+  formatDate,
+  getInvoiceStatusVariant,
+  getInvoiceStatusLabel,
+  getClientStatusVariant,
+  getClientStatusLabel,
+} from '../../utils/format';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -200,6 +207,8 @@ export default {
     formatDate,
     getInvoiceStatusVariant,
     getInvoiceStatusLabel,
+    getClientStatusVariant,
+    getClientStatusLabel,
 
     async getClient() {
       if (!this.clientId) return;

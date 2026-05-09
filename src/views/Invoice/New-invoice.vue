@@ -69,6 +69,7 @@
             <div class="flex flex-col gap-4">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Informazioni Fornitore</h3>
               <div class="flex flex-col gap-4">
+                <tlSelect v-model="dataInvoice.data.client_id" label="Associa a Cliente" :options="clientOptions" class="w-full" />
                 <div class="w-full flex gap-2">
                   <tlInput
                     v-model="dataInvoice.data.supplier_name"
@@ -178,7 +179,9 @@
 import { analyzeInvoice, extractTextFromPDF } from '../../utils/invoiceParser';
 import { aiService } from '../../utils/aiService';
 import { createInvoice } from '../../api/invoices';
+import { getClients } from '../../api/clients';
 import { auth } from '../../data/auth';
+import { datadb } from '../../data/datadb';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -224,6 +227,7 @@ export default {
             analysisType: null, // 'local' o 'ai'
           },
           supplier_name: '',
+          client_id: null,
           supplier_number: '',
           amount: '0',
           currency: 'EUR',
@@ -239,8 +243,21 @@ export default {
         errors: {},
         loading: false,
       },
+      datadb,
       newInvoiceId: null,
     };
+  },
+  computed: {
+    clientOptions() {
+      if (!this.datadb.clients.data) return [];
+      return [
+        { label: 'Nessun cliente (Inserimento manuale)', value: null },
+        ...this.datadb.clients.data.map((client) => ({
+          label: client.name,
+          value: client.id,
+        })),
+      ];
+    },
   },
   methods: {
     addItem() {
@@ -296,6 +313,7 @@ export default {
 
       const invoiceData = {
         profile_id: profileId,
+        client_id: this.dataInvoice.data.client_id,
         supplier_name: this.dataInvoice.data.supplier_name,
         supplier_number: this.dataInvoice.data.supplier_number,
         amount: parseFloat(this.dataInvoice.data.amount),
@@ -348,6 +366,11 @@ export default {
       this.dataInvoice.loading = true;
       this.dataInvoice.data.file.error = null;
       this.dataInvoice.data.file.progress = 0;
+
+      // Carica i clienti se non presenti
+      if (this.datadb.clients.data.length === 0) {
+        await getClients();
+      }
 
       try {
         if (this.dataInvoice.data.file.analysisType === 'local') {
@@ -416,6 +439,16 @@ export default {
         console.error(err);
       } finally {
         this.dataInvoice.loading = false;
+      }
+    },
+  },
+  watch: {
+    'dataInvoice.data.client_id'(newVal) {
+      if (newVal) {
+        const selectedClient = this.datadb.clients.data.find((c) => c.id === newVal);
+        if (selectedClient) {
+          this.dataInvoice.data.supplier_name = selectedClient.name;
+        }
       }
     },
   },
