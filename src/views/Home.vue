@@ -109,7 +109,6 @@
 import { auth } from '../data/auth';
 import { store } from '../data/store';
 import { datadb } from '../data/datadb';
-import { getInvoiceById } from '../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../utils/format';
 import { getTotalInvoicesCount, getTotalInvoicesAmount, getPaidInvoicesAmount, getUniqueSuppliersCount } from '../utils/analytics';
 
@@ -175,7 +174,6 @@ export default {
       if (!invoiceId) return;
 
       this.$router.push({ name: 'invoice', params: { id: invoiceId } });
-      await getInvoiceById(invoiceId);
     },
   },
 };

@@ -28,7 +28,7 @@
           </div>
 
           <div v-else-if="!datadb.clients.loading && datadb.clients.data.length >= 1" class="w-full flex flex-col gap-1">
-            <cardRow @click="viewClient(client.id)" v-for="(client, index) in datadb.clients.data" :key="index">
+            <cardRow @click="handleClient(client.id)" v-for="(client, index) in datadb.clients.data" :key="index">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
                 <tlAvatar size="small" :fallback="client.name.charAt(0)" />
                 <div class="h-full lg:flex hidden flex-col">
@@ -111,8 +111,10 @@ export default {
     getClientStatusVariant,
     getClientStatusLabel,
 
-    viewClient(clientId) {
-      this.$router.push(`/client/${clientId}`);
+    async handleClient(clientId) {
+      if (!clientId) return;
+
+      this.$router.push({ name: 'client', params: { id: clientId } });
     },
   },
   mounted() {
