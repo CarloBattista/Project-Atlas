@@ -43,3 +43,30 @@ create table public.invoice_items (
   constraint invoice_items_pkey primary key (id),
   constraint invoice_items_invoice_id_fkey foreign KEY (invoice_id) references invoices (id)
 ) TABLESPACE pg_default;
+
+create table public.clients (
+  id uuid not null default gen_random_uuid (),
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone null,
+  profile_id uuid not null,
+  name text not null,
+  email text null,
+  phone text null,
+  website text null,
+  company_name text null,
+  vat_number text null,
+  tax_code text null,
+  address text null,
+  city text null,
+  postal_code text null,
+  country text null,
+  logo_url text null,
+  status public.status_client not null default 'active'::status_client,
+  total_invoiced numeric not null default '0'::numeric,
+  invoices_count bigint not null default '0'::bigint,
+  last_invoice_at timestamp with time zone null,
+  notes text null,
+  constraint clients_pkey primary key (id),
+  constraint clients_vat_number_key unique (vat_number),
+  constraint clients_profile_id_fkey foreign KEY (profile_id) references profiles (id)
+) TABLESPACE pg_default;

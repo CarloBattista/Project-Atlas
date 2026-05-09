@@ -268,7 +268,7 @@
         <!-- Financial Breakdown -->
         <div class="mt-4 p-6 rounded-[24px] bg-[#F5F5F5] border border-black/5 flex flex-col gap-3">
           <div class="flex justify-between items-center text-sm">
-            <span class="text-[#212121]/50">Imponibile</span>
+            <span class="text-[#212121]/50">Subtotale</span>
             <span class="font-medium text-black">{{ formatCurrency(subtotal) }}</span>
           </div>
 
