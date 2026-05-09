@@ -1,6 +1,7 @@
 <template>
   <div>
     <RouterView />
+    <tlToastContainer />
   </div>
 </template>
 
@@ -9,8 +10,13 @@ import { auth } from './data/auth';
 import { getAuthUser } from './lib/auth';
 import { store } from './data/store';
 
+import tlToastContainer from './components/toast/tl-toast-container.vue';
+
 export default {
   name: 'App',
+  components: {
+    tlToastContainer,
+  },
   data() {
     return {
       auth,

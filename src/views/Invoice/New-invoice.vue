@@ -182,6 +182,7 @@ import { createInvoice } from '../../api/invoices';
 import { getClients } from '../../api/clients';
 import { auth } from '../../data/auth';
 import { datadb } from '../../data/datadb';
+import { toast } from '../../utils/toast';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -344,6 +345,8 @@ export default {
           this.newInvoiceId = data.id;
           this.steps.current = 4; // Mostra lo step di successo
         }
+
+        toast.dark('Salvato con successo!', { showIcon: false, closable: false });
       } catch (err) {
         console.error(err);
         alert('Errore imprevisto durante il salvataggio.');

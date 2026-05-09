@@ -80,6 +80,7 @@
 import { auth } from '../../data/auth';
 import { datadb } from '../../data/datadb';
 import { getClients, createClient, updateClient, deleteClientById, getClientById } from '../../api/clients';
+import { toast } from '../../utils/toast';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -182,6 +183,8 @@ export default {
         } else {
           this.$router.push('/clients');
         }
+
+        toast.dark('Salvato con successo!', { showIcon: false, closable: false });
       } catch (e) {
         console.error(e);
         alert('Errore durante il salvataggio del cliente');

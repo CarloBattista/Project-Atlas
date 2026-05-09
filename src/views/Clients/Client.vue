@@ -63,11 +63,19 @@
             <div class="flex flex-col gap-1">
               <span class="text-[#212121]/50 text-xs font-semibold uppercase tracking-wider">Dati Fiscali</span>
               <div class="flex flex-col gap-2 mt-2">
-                <div v-if="datadb.client.data?.vat_number" class="flex items-center gap-2 text-sm text-black">
+                <div
+                  @click="actionCopy(datadb.client.data?.vat_number)"
+                  v-if="datadb.client.data?.vat_number"
+                  class="flex items-center gap-2 text-sm text-black"
+                >
                   <span class="font-bold text-[10px] text-gray-400 border border-gray-400 rounded px-1">IVA</span>
                   {{ datadb.client.data?.vat_number }}
                 </div>
-                <div v-if="datadb.client.data?.tax_code" class="flex items-center gap-2 text-sm text-black">
+                <div
+                  @click="actionCopy(datadb.client.data?.tax_code)"
+                  v-if="datadb.client.data?.tax_code"
+                  class="flex items-center gap-2 text-sm text-black"
+                >
                   <span class="font-bold text-[10px] text-gray-400 border border-gray-400 rounded px-1">CF</span>
                   {{ datadb.client.data?.tax_code }}
                 </div>
@@ -174,6 +182,7 @@ import {
   getClientStatusVariant,
   getClientStatusLabel,
 } from '../../utils/format';
+import { toast } from '../../utils/toast';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -229,6 +238,13 @@ export default {
     getInvoiceStatusLabel,
     getClientStatusVariant,
     getClientStatusLabel,
+
+    actionCopy(data) {
+      if (!data) return;
+
+      navigator.clipboard.writeText(data);
+      toast.dark('Copiato!', { showIcon: false, closable: false });
+    },
 
     async getClient() {
       if (!this.clientId) return;

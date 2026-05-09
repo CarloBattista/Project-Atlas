@@ -45,6 +45,7 @@
 import { supabase } from '../../lib/supabase';
 import { auth } from '../../data/auth';
 import { getProfile } from '../../lib/auth';
+import { toast } from '../../utils/toast';
 
 import appLogo from '../../components/global/app-logo.vue';
 import tlInput from '../../components/input/tl-input.vue';
@@ -103,6 +104,8 @@ export default {
         await getProfile();
 
         this.$router.push({ name: 'home' });
+
+        toast.dark('Completato!', { showIcon: false, closable: false });
       } catch (e) {
         console.error(e);
       } finally {
