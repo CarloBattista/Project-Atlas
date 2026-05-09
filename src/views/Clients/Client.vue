@@ -66,7 +66,7 @@
                 <div
                   @click="actionCopy(datadb.client.data?.vat_number)"
                   v-if="datadb.client.data?.vat_number"
-                  class="flex items-center gap-2 text-sm text-black"
+                  class="flex items-center gap-2 text-sm text-black cursor-pointer"
                 >
                   <span class="font-bold text-[10px] text-gray-400 border border-gray-400 rounded px-1">IVA</span>
                   {{ datadb.client.data?.vat_number }}
@@ -74,7 +74,7 @@
                 <div
                   @click="actionCopy(datadb.client.data?.tax_code)"
                   v-if="datadb.client.data?.tax_code"
-                  class="flex items-center gap-2 text-sm text-black"
+                  class="flex items-center gap-2 text-sm text-black cursor-pointer"
                 >
                   <span class="font-bold text-[10px] text-gray-400 border border-gray-400 rounded px-1">CF</span>
                   {{ datadb.client.data?.tax_code }}
