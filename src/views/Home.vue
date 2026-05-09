@@ -68,7 +68,7 @@
             <p class="text-gray-500 text-sm font-normal mt-1">Non hai creato fatture ancora.</p>
           </div>
           <div v-else-if="!datadb.invoices?.loading && datadb.invoices?.data.length >= 1" class="w-full flex flex-col gap-1">
-            <cardRow @click="handleInvoice(invoice.id)" v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">
+            <cardRow @click="handleInvoice(invoice.id)" v-for="(invoice, invoiceIndex) in paginatedInvoices" :key="invoiceIndex">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
                 <tlAvatar size="small" :fallback="invoice?.supplier_name.charAt(0)" />
                 <div class="h-full lg:flex hidden flex-col">
@@ -95,6 +95,31 @@
                 </div>
               </div>
             </cardRow>
+
+            <!-- PAGINATION -->
+            <div v-if="totalPages > 1" class="w-full mt-4 flex items-center justify-between border-t border-[#EDEDED] pt-4">
+              <span class="text-[#656565] text-sm"> Pagina {{ currentPage }} di {{ totalPages }} </span>
+              <div class="flex gap-2 items-center">
+                <tlButton size="small" variant="tertiary" leftIcon="ChevronLeft" label="" :disabled="currentPage === 1" @click="currentPage--" />
+                <tlButton
+                  @click="currentPage = page"
+                  v-for="(page, index) in totalPages.slice(0, 9)"
+                  :key="index"
+                  size="small"
+                  :variant="currentPage === page ? 'primary' : 'tertiary'"
+                  :disabled="currentPage === page"
+                  :label="page"
+                />
+                <tlButton
+                  size="small"
+                  variant="tertiary"
+                  rightIcon="ChevronRight"
+                  label=""
+                  :disabled="currentPage === totalPages"
+                  @click="currentPage++"
+                />
+              </div>
+            </div>
           </div>
           <div v-else-if="datadb.invoices?.loading" class="w-full my-14 flex items-center justify-center">
             <loader />
@@ -149,6 +174,9 @@ export default {
       auth,
       store,
       datadb,
+
+      currentPage: 1,
+      itemsPerPage: 2,
     };
   },
   computed: {
@@ -158,6 +186,20 @@ export default {
       }
 
       return 'Analizza fattura';
+    },
+
+    paginatedInvoices() {
+      if (!this.datadb.invoices.data) return [];
+
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+
+      return this.datadb.invoices.data.slice(start, end);
+    },
+
+    totalPages() {
+      if (!this.datadb.invoices.data) return 0;
+      return Math.ceil(this.datadb.invoices.data.length / this.itemsPerPage);
     },
   },
   methods: {
