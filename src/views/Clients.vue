@@ -4,6 +4,7 @@
     <div class="w-full h-11 flex items-center">
       <h1 class="text-black text-2xl font-semibold">Clienti</h1>
       <div class="ml-auto flex gap-2 items-center">
+        <tlIconButton @click="store.searchBar.isOpen = true" size="small" variant="tertiary" icon="SearchIcon" />
         <RouterLink to="/new-client">
           <tlButton size="small" variant="tertiary" leftIcon="Plus" label="Nuovo cliente" />
         </RouterLink>
@@ -110,6 +111,7 @@ import sidebar from '../components/navigation/sidebar.vue';
 import mainView from '../components/global/main-view.vue';
 import loader from '../components/global/loader.vue';
 import tlButton from '../components/button/tl-button.vue';
+import tlIconButton from '../components/button/tl-icon-button.vue';
 import shelf from '../components/shelf/shelf.vue';
 import cardRow from '../components/card/card-row.vue';
 import tlAvatar from '../components/avatar/tl-avatar.vue';
@@ -126,6 +128,7 @@ export default {
     mainView,
     loader,
     tlButton,
+    tlIconButton,
     shelf,
     cardRow,
     tlAvatar,

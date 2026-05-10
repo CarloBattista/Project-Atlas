@@ -2,6 +2,7 @@
   <div>
     <RouterView />
     <tlToastContainer />
+    <searchBar />
   </div>
 </template>
 
@@ -11,11 +12,13 @@ import { getAuthUser } from './lib/auth';
 import { store } from './data/store';
 
 import tlToastContainer from './components/toast/tl-toast-container.vue';
+import searchBar from './components/search/search-bar.vue';
 
 export default {
   name: 'App',
   components: {
     tlToastContainer,
+    searchBar,
   },
   data() {
     return {

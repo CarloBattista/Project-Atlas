@@ -79,4 +79,7 @@ export const store = reactive({
       loading: false,
     },
   },
+  searchBar: {
+    isOpen: false,
+  },
 });

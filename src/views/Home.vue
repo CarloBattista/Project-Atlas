@@ -4,6 +4,7 @@
     <div class="w-full h-11 flex items-center">
       <h1 v-if="auth.profile" class="text-black text-2xl font-semibold">Bentornato, {{ auth.profile?.first_name }}!</h1>
       <div class="ml-auto flex gap-2 items-center">
+        <tlIconButton @click="store.searchBar.isOpen = true" size="small" variant="tertiary" icon="SearchIcon" />
         <RouterLink to="/new-invoice">
           <tlButton size="small" variant="tertiary" leftIcon="Plus" label="Nuova fattura" />
         </RouterLink>
@@ -153,6 +154,7 @@ import sidebar from '../components/navigation/sidebar.vue';
 import mainView from '../components/global/main-view.vue';
 import loader from '../components/global/loader.vue';
 import tlButton from '../components/button/tl-button.vue';
+import tlIconButton from '../components/button/tl-icon-button.vue';
 import shelf from '../components/shelf/shelf.vue';
 import cardInfo from '../components/card/card-info.vue';
 import cardRow from '../components/card/card-row.vue';
@@ -170,6 +172,7 @@ export default {
     mainView,
     loader,
     tlButton,
+    tlIconButton,
     shelf,
     cardInfo,
     cardRow,
