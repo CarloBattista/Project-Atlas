@@ -60,6 +60,7 @@
       <tlButton
         @click="handleUpdateFullname"
         size="small"
+        variant="pulse"
         label="Salva"
         :loading="store.modals.fullname.loading"
         :disabled="!store.modals.fullname.data.first_name && !store.modals.fullname.data.last_name"
@@ -83,6 +84,7 @@
       <tlButton
         @click="handleUpdateEmail"
         size="small"
+        variant="pulse"
         label="Salva"
         :loading="store.modals.newEmail.loading"
         :disabled="!store.modals.newEmail.data.email"
@@ -106,6 +108,7 @@
       <tlButton
         @click="handleUpdatePhone"
         size="small"
+        variant="pulse"
         label="Salva"
         :loading="store.modals.phone.loading"
         :disabled="!store.modals.phone.data.phone"

@@ -66,7 +66,7 @@ export default {
 }
 
 .switch-checkbox.checked .switch-background {
-  background-color: #00d66f;
+  background-color: rgb(255, 50, 186);
 }
 
 .switch-checkbox.checked .switch-knob {
@@ -78,6 +78,6 @@ export default {
 }
 
 .switch-checkbox:not(.disabled).checked:hover .switch-background {
-  background-color: #00bc61;
+  background-color: rgb(209, 0, 150);
 }
 </style>

@@ -31,6 +31,7 @@
         <tlButton
           @click="actionCompleteProfile"
           type="submit"
+          variant="pulse"
           label="Continua"
           :loading="data.loading"
           :disabled="!data.user.first_name || !data.user.last_name"

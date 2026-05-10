@@ -165,6 +165,15 @@ export default {
   background-color: rgb(185, 22, 55);
 }
 
+.tl-button.variant-pulse {
+  background-color: rgb(255, 50, 186);
+  color: rgb(255, 255, 255);
+}
+
+.tl-button.variant-pulse:hover {
+  background-color: rgb(209, 0, 150);
+}
+
 /* LOADER */
 .loader {
   height: 22px;

@@ -28,6 +28,7 @@
         <tlButton
           @click="actionSignin"
           type="submit"
+          variant="pulse"
           label="Continua"
           :loading="data.loading"
           :disabled="!data.user.email || !data.user.password"

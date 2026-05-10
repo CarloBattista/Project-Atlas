@@ -99,7 +99,7 @@ export default {
 }
 
 .field-container.focus .input-container {
-  box-shadow: 0 0 0 1.5px #171717 inset;
+  box-shadow: 0 0 0 1.5px #ff32ba inset;
 }
 
 .field-container:not(.focus).error .input-container {

@@ -36,6 +36,7 @@
         <tlButton
           @click="actionSignup"
           type="submit"
+          variant="pulse"
           label="Continua"
           :loading="data.loading"
           :disabled="!data.user.email || !data.user.password || !data.user.confirm_password"
