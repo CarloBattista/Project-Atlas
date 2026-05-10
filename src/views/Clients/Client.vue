@@ -85,13 +85,17 @@
 
           <div class="flex flex-col gap-1 pt-6 border-t border-black/5">
             <span class="text-[#212121]/50 text-xs font-semibold uppercase tracking-wider">Indirizzo</span>
-            <div class="flex items-start gap-2 mt-2 text-sm text-black">
+            <a
+              :href="'https://www.google.com/maps/search/' + datadb.client.data?.address"
+              target="_blank"
+              class="flex items-start gap-2 mt-2 text-sm text-black"
+            >
               <MapPin size="16" class="text-gray-400 mt-0.5" />
               <div class="flex flex-col">
                 <span>{{ datadb.client.data?.address }}</span>
                 <span>{{ datadb.client.data?.postal_code }} {{ datadb.client.data?.city }} ({{ datadb.client.data?.country }})</span>
               </div>
-            </div>
+            </a>
           </div>
         </div>
 
