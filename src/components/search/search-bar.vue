@@ -7,6 +7,7 @@
             <SearchIcon size="16" />
           </div>
           <input
+            ref="searchInput"
             v-model="searchQuery"
             type="text"
             placeholder="Inizia a cercare..."
@@ -216,6 +217,15 @@ export default {
     },
   },
   watch: {
+    'store.searchBar.isOpen'(isOpen) {
+      if (isOpen) {
+        this.$nextTick(() => {
+          if (this.$refs.searchInput) {
+            this.$refs.searchInput.focus();
+          }
+        });
+      }
+    },
     searchQuery(newQuery) {
       if (!newQuery || newQuery.length < 2) {
         this.results = { invoices: [], clients: [] };
@@ -242,12 +252,14 @@ export default {
 <style scoped>
 .slide-fade-enter-active,
 .slide-fade-leave-active {
-  transition: all 300ms ease;
+  transition-property: opacity, transform;
+  transition-duration: 400ms;
+  transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .slide-fade-enter-from,
 .slide-fade-leave-to {
+  transform: scale(0.95);
   opacity: 0;
-  transform: scale(0.98);
 }
 
 .fade-enter-active,
