@@ -48,15 +48,15 @@
               <div class="flex flex-col gap-2 mt-2">
                 <div v-if="datadb.client.data?.email" class="flex items-center gap-2 text-sm text-black">
                   <Mail size="16" class="text-gray-400" />
-                  <a href="mailto:{{ datadb.client.data?.email }}">{{ datadb.client.data?.email }}</a>
+                  <a :href="'mailto:' + datadb.client.data?.email">{{ datadb.client.data?.email }}</a>
                 </div>
                 <div v-if="datadb.client.data?.phone" class="flex items-center gap-2 text-sm text-black">
                   <Phone size="16" class="text-gray-400" />
-                  <a href="tel:{{ datadb.client.data?.phone }}">{{ datadb.client.data?.phone }}</a>
+                  <a :href="'tel:' + datadb.client.data?.phone">{{ datadb.client.data?.phone }}</a>
                 </div>
                 <div v-if="datadb.client.data?.website" class="flex items-center gap-2 text-sm text-black">
                   <Globe size="16" class="text-gray-400" />
-                  <a href="https://{{ datadb.client.data?.website }}">{{ datadb.client.data?.website }}</a>
+                  <a :href="'https://' + datadb.client.data?.website" target="_blank">{{ datadb.client.data?.website }}</a>
                 </div>
               </div>
             </div>
