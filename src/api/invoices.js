@@ -11,7 +11,7 @@ export async function getInvoices(page = 1, limit = 10) {
 
     const { data, error, count } = await supabase
       .from('invoices')
-      .select('*', { count: 'exact' })
+      .select('*, clients(*)', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(from, to);
 

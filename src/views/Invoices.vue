@@ -28,10 +28,10 @@
           <div v-else-if="!datadb.invoices?.loading && datadb.invoices?.data.length >= 1" class="w-full flex flex-col gap-1">
             <cardRow @click="handleInvoice(invoice.id)" v-for="(invoice, invoiceIndex) in datadb.invoices.data" :key="invoiceIndex">
               <div class="w-full lg:max-w-[300px] max-w-fit flex gap-2 items-center">
-                <tlAvatar size="small" :fallback="invoice?.supplier_name.charAt(0)" />
+                <tlAvatar size="small" :image="invoice?.clients?.logo_url" :fallback="invoice?.supplier_name.charAt(0)" />
                 <div class="h-full lg:flex hidden flex-col">
                   <h2 class="text-black text-sm font-medium max-one-line">{{ invoice?.supplier_name }}</h2>
-                  <p v-if="false" class="text-gray-500 text-xs font-normal max-one-line">mail@gmail.com</p>
+                  <p v-if="invoice?.clients?.email" class="text-gray-500 text-xs font-normal max-one-line">{{ invoice?.clients?.email }}</p>
                 </div>
               </div>
               <div class="w-full ml-4 grid lg:grid-cols-[200px_1fr_120px_120px] grid-cols-[100px_1fr_120px_120px] items-center gap-4">

@@ -10,7 +10,7 @@
       <CircleAlert v-else-if="type === 'warning'" />
       <Info v-else-if="type === 'info' || type === 'dark'" />
     </div>
-    <div v-if="message" class="mx-3 text-sm font-normal">{{ message }}</div>
+    <div v-if="message" class="mx-3 text-sm font-medium">{{ message }}</div>
     <button
       v-if="closable"
       type="button"

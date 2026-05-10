@@ -9,7 +9,7 @@
 
 <script>
 // ICONS
-import { Plus, Eye, EyeClosed, Pen, BanknoteArrowUp, BanknoteX, Trash2, ChevronLeft, ChevronRight } from '@lucide/vue';
+import { Plus, Eye, EyeClosed, Pen, BanknoteArrowUp, BanknoteX, Trash2, ChevronLeft, ChevronRight, UserRound } from '@lucide/vue';
 
 export default {
   name: 'tl-button',
@@ -24,6 +24,7 @@ export default {
     Trash2,
     ChevronLeft,
     ChevronRight,
+    UserRound,
   },
   props: {
     type: {

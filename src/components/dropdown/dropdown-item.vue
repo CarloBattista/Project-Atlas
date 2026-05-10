@@ -11,7 +11,7 @@
 
 <script>
 // ICONS
-import { EyeClosed, Eye, Pen, BanknoteArrowUp, BanknoteX, Trash2 } from '@lucide/vue';
+import { EyeClosed, Eye, Pen, BanknoteArrowUp, BanknoteX, Trash2, UserRound } from '@lucide/vue';
 
 export default {
   name: 'dropdown-item',
@@ -23,6 +23,7 @@ export default {
     BanknoteArrowUp,
     BanknoteX,
     Trash2,
+    UserRound,
   },
   props: {
     icon: String,

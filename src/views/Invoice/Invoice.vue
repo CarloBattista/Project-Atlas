@@ -7,6 +7,7 @@
       </RouterLink>
       <h1 class="text-black text-2xl font-semibold max-one-line">{{ invoice.data?.supplier_name }}</h1>
       <div v-if="!store.windowOptions.isMobile" class="ml-auto flex gap-2 items-center">
+        <tlButton @click="handleClient(invoice.data?.client_id)" size="small" variant="tertiary" leftIcon="UserRound" label="Vai al cliente" />
         <tlButton
           v-if="invoice.data?.file_url"
           @click="previewIsVisible = !previewIsVisible"
@@ -36,6 +37,7 @@
             <tlIconButton size="small" icon="EllipsisVertical" />
           </template>
           <template #options>
+            <dropdownItem @click="handleClient(invoice.data?.client_id)" icon="UserRound" label="Vai al cliente" />
             <dropdownItem
               v-if="invoice.data?.file_url"
               @click="previewIsVisible = !previewIsVisible"
@@ -490,6 +492,11 @@ export default {
       }
     },
 
+    async handleClient(clientId) {
+      if (!clientId) return;
+
+      this.$router.push({ name: 'client', params: { id: clientId } });
+    },
     async getInvoice() {
       if (!this.invoiceId) return;
 
