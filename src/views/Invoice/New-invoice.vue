@@ -69,14 +69,8 @@
             <div class="flex flex-col gap-4">
               <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Informazioni Fornitore</h3>
               <div class="flex flex-col gap-4">
-                <tlSelect v-model="dataInvoice.data.client_id" label="Associa a Cliente" :options="clientOptions" class="w-full" />
                 <div class="w-full flex gap-2">
-                  <tlInput
-                    v-model="dataInvoice.data.supplier_name"
-                    label="Nome Fornitore"
-                    placeholder="Inserisci il nome del fornitore"
-                    class="w-full"
-                  />
+                  <tlSelect v-model="dataInvoice.data.client_id" label="Associa a Cliente" :options="clientOptions" class="w-full" />
                   <tlInput v-model="dataInvoice.data.supplier_number" label="Numero Fattura" placeholder="Es: FATT-2024-001" class="w-full" />
                 </div>
                 <tlInput
@@ -215,6 +209,7 @@ export default {
         current: 0,
         total: 3,
       },
+      initialData: null,
 
       dataInvoice: {
         data: {
@@ -252,15 +247,26 @@ export default {
     clientOptions() {
       if (!this.datadb.clients.data) return [];
       return [
-        { label: 'Nessun cliente (Inserimento manuale)', value: null },
+        { label: 'Crea nuovo cliente', value: 'new_client' },
         ...this.datadb.clients.data.map((client) => ({
           label: client.name,
           value: client.id,
         })),
       ];
     },
+    isDirty() {
+      // Se la fattura è stata salvata con successo, non mostriamo l'avviso
+      if (this.steps.current === 4) return false;
+      return JSON.stringify(this.dataInvoice.data) !== this.initialData;
+    },
   },
   methods: {
+    handleBeforeUnload(event) {
+      if (this.isDirty) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    },
     addItem() {
       this.dataInvoice.data.items.push({
         description: '',
@@ -301,57 +307,6 @@ export default {
         this.processInvoice();
       } else if (currentStep === stepSummary) {
         this.handleSave();
-      }
-    },
-    async handleSave() {
-      const profileId = auth.profile?.id;
-      if (!profileId) {
-        alert('Errore: Profilo non trovato. Per favore effettua il login.');
-        return;
-      }
-
-      this.dataInvoice.loading = true;
-
-      const invoiceData = {
-        profile_id: profileId,
-        client_id: this.dataInvoice.data.client_id,
-        supplier_name: this.dataInvoice.data.supplier_name,
-        supplier_number: this.dataInvoice.data.supplier_number,
-        amount: parseFloat(this.dataInvoice.data.amount),
-        currency: this.dataInvoice.data.currency,
-        invoice_date: this.dataInvoice.data.invoice_date,
-        due_date: this.dataInvoice.data.due_date,
-        bank_account_details: this.dataInvoice.data.bank_account_details,
-        notes: this.dataInvoice.data.notes,
-        tax: parseFloat(this.dataInvoice.data.tax),
-        discount: parseFloat(this.dataInvoice.data.discount),
-        shipping_fee: parseFloat(this.dataInvoice.data.shipping_fee),
-        status: 'pending',
-      };
-
-      const items = this.dataInvoice.data.items.map((item) => ({
-        description: item.description,
-        quantity: parseFloat(item.quantity),
-        unit_cost: parseFloat(item.unit_cost),
-        amount: parseFloat(item.amount),
-      }));
-
-      try {
-        const { data, error } = await createInvoice(invoiceData, items);
-
-        if (error) {
-          alert('Errore durante il salvataggio: ' + error);
-        } else {
-          this.newInvoiceId = data.id;
-          this.steps.current = 4; // Mostra lo step di successo
-        }
-
-        toast.dark('Salvato con successo!', { showIcon: false, closable: false });
-      } catch (err) {
-        console.error(err);
-        alert('Errore imprevisto durante il salvataggio.');
-      } finally {
-        this.dataInvoice.loading = false;
       }
     },
     goToInvoice() {
@@ -444,16 +399,91 @@ export default {
         this.dataInvoice.loading = false;
       }
     },
+    async handleSave() {
+      const profileId = auth.profile?.id;
+      if (!profileId) {
+        alert('Errore: Profilo non trovato. Per favore effettua il login.');
+        return;
+      }
+
+      this.dataInvoice.loading = true;
+
+      const invoiceData = {
+        profile_id: profileId,
+        client_id: this.dataInvoice.data.client_id,
+        supplier_name: this.dataInvoice.data.supplier_name,
+        supplier_number: this.dataInvoice.data.supplier_number,
+        amount: parseFloat(this.dataInvoice.data.amount),
+        currency: this.dataInvoice.data.currency,
+        invoice_date: this.dataInvoice.data.invoice_date,
+        due_date: this.dataInvoice.data.due_date,
+        bank_account_details: this.dataInvoice.data.bank_account_details,
+        notes: this.dataInvoice.data.notes,
+        tax: parseFloat(this.dataInvoice.data.tax),
+        discount: parseFloat(this.dataInvoice.data.discount),
+        shipping_fee: parseFloat(this.dataInvoice.data.shipping_fee),
+        status: 'pending',
+      };
+
+      const items = this.dataInvoice.data.items.map((item) => ({
+        description: item.description,
+        quantity: parseFloat(item.quantity),
+        unit_cost: parseFloat(item.unit_cost),
+        amount: parseFloat(item.amount),
+      }));
+
+      try {
+        const { data, error } = await createInvoice(invoiceData, items);
+
+        if (error) {
+          alert('Errore durante il salvataggio: ' + error);
+        } else {
+          this.newInvoiceId = data.id;
+          this.steps.current = 4; // Mostra lo step di successo
+        }
+
+        toast.dark('Salvato con successo!', { showIcon: false, closable: false });
+      } catch (err) {
+        console.error(err);
+        alert('Errore imprevisto durante il salvataggio.');
+      } finally {
+        this.dataInvoice.loading = false;
+      }
+    },
   },
   watch: {
     'dataInvoice.data.client_id'(newVal) {
-      if (newVal) {
+      if (newVal === 'new_client') {
+        this.$router.push('/new-client');
+        this.$nextTick(() => {
+          this.dataInvoice.data.client_id = null;
+        });
+      } else if (newVal) {
         const selectedClient = this.datadb.clients.data.find((c) => c.id === newVal);
         if (selectedClient) {
           this.dataInvoice.data.supplier_name = selectedClient.name;
         }
       }
     },
+  },
+  mounted() {
+    this.initialData = JSON.stringify(this.dataInvoice.data);
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+  },
+  beforeRouteLeave(_to, _from, next) {
+    if (this.isDirty) {
+      const answer = window.confirm('Hai delle modifiche non salvate. Sei sicuro di voler uscire?');
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    } else {
+      next();
+    }
   },
 };
 </script>

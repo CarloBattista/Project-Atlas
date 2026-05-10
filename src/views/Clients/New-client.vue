@@ -135,20 +135,33 @@ export default {
         },
         loading: false,
       },
+      initialData: null,
+      isSaved: false,
     };
   },
   computed: {
     isEdit() {
       return this.$route.name === 'edit-client';
     },
+    isDirty() {
+      if (this.isSaved) return false;
+      return JSON.stringify(this.data.form) !== this.initialData;
+    },
   },
   methods: {
+    handleBeforeUnload(event) {
+      if (this.isDirty) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    },
     async loadClient(id) {
       this.data.loading = true;
       try {
         const { data } = await getClientById(id);
         if (data) {
           this.data.form = { ...data };
+          this.initialData = JSON.stringify(this.data.form);
         }
       } catch (e) {
         console.error(e);
@@ -178,6 +191,7 @@ export default {
         }
 
         await getClients();
+        this.isSaved = true;
         if (this.isEdit) {
           this.$router.push(`/client/${this.data.form.id}`);
         } else {
@@ -199,6 +213,7 @@ export default {
       try {
         await deleteClientById(this.data.form.id);
         await getClients();
+        this.isSaved = true;
         this.$router.push('/clients');
       } catch (e) {
         console.error(e);
@@ -209,15 +224,34 @@ export default {
     },
   },
   async mounted() {
+    this.initialData = JSON.stringify(this.data.form);
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+
     if (this.isEdit) {
       const clientId = this.$route.params.id;
       // Cerchiamo prima nello store locale
       const existingClient = datadb.clients.data.find((c) => c.id === clientId);
       if (existingClient) {
         this.data.form = { ...existingClient };
+        this.initialData = JSON.stringify(this.data.form);
       } else {
         await this.loadClient(clientId);
       }
+    }
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+  },
+  beforeRouteLeave(_to, _from, next) {
+    if (this.isDirty) {
+      const answer = window.confirm('Hai delle modifiche non salvate. Sei sicuro di voler uscire?');
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    } else {
+      next();
     }
   },
 };
