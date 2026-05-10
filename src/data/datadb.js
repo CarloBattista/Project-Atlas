@@ -18,6 +18,11 @@ export const datadb = reactive({
     error: null,
     loading: true,
   },
+  analytics: {
+    invoices: [],
+    loading: false,
+    error: null,
+  },
   client: {
     data: {},
     error: null,

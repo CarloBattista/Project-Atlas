@@ -54,6 +54,26 @@
           </div>
         </div>
       </shelf>
+
+      <div v-if="datadb.analytics.invoices && datadb.analytics.invoices.length > 0" class="w-full h-full flex flex-col gap-2.5">
+        <div v-if="datadb.analytics.loading" class="w-full h-[300px] flex items-center justify-center">
+          <loader />
+        </div>
+        <div v-else class="w-full grid gap-4 lg:grid-cols-2 grid-cols-1">
+          <div class="bg-white p-6 rounded-[18px] border border-black/5 min-h-[300px]">
+            <h3 class="text-sm font-medium text-gray-500 mb-4">Ricavi Mensili (Ultimi 6 mesi)</h3>
+            <div class="h-[200px]">
+              <BarChart :chartData="monthlyRevenueData" />
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-[18px] border border-black/5 min-h-[300px]">
+            <h3 class="text-sm font-medium text-gray-500 mb-4">Distribuzione Stati Fatture</h3>
+            <div class="h-[200px]">
+              <DoughnutChart :chartData="invoiceStatusDistribution" />
+            </div>
+          </div>
+        </div>
+      </div>
       <shelf v-if="datadb.invoices.data">
         <div class="w-full h-full flex flex-col gap-2.5">
           <div class="w-full flex gap-2 items-center">
@@ -146,9 +166,10 @@
 import { auth } from '../data/auth';
 import { store } from '../data/store';
 import { datadb } from '../data/datadb';
-import { getInvoices } from '../api/invoices';
+import { getInvoices, getInvoicesForAnalytics } from '../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../utils/format';
 import { getTotalInvoicesCount, getTotalInvoicesAmount, getPaidInvoicesAmount, getUniqueSuppliersCount } from '../utils/analytics';
+import { getMonthlyRevenueData, getInvoiceStatusDistribution } from '../utils/detailed-analytics';
 
 import sidebar from '../components/navigation/sidebar.vue';
 import mainView from '../components/global/main-view.vue';
@@ -161,6 +182,8 @@ import cardRow from '../components/card/card-row.vue';
 import tlAvatar from '../components/avatar/tl-avatar.vue';
 import chip from '../components/chip/chip.vue';
 import badge from '../components/badge/badge.vue';
+import BarChart from '../components/charts/BarChart.vue';
+import DoughnutChart from '../components/charts/DoughnutChart.vue';
 
 // ICONS
 import { ChartLine, Files } from '@lucide/vue';
@@ -179,6 +202,8 @@ export default {
     tlAvatar,
     chip,
     badge,
+    BarChart,
+    DoughnutChart,
 
     // ICONS
     ChartLine,
@@ -207,6 +232,14 @@ export default {
       if (!this.datadb.invoices.totalCount) return 0;
       return Math.ceil(this.datadb.invoices.totalCount / this.itemsPerPage);
     },
+
+    monthlyRevenueData() {
+      return getMonthlyRevenueData(this.datadb.analytics.invoices);
+    },
+
+    invoiceStatusDistribution() {
+      return getInvoiceStatusDistribution(this.datadb.analytics.invoices);
+    },
   },
   methods: {
     getInvoiceStatusVariant,
@@ -232,6 +265,9 @@ export default {
       this.currentPage = 1;
       getInvoices(this.currentPage, this.itemsPerPage);
     },
+  },
+  mounted() {
+    getInvoicesForAnalytics();
   },
 };
 </script>

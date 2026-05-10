@@ -27,6 +27,24 @@ export async function getInvoices(page = 1, limit = 10) {
   }
 }
 
+export async function getInvoicesForAnalytics() {
+  datadb.analytics.loading = true;
+  datadb.analytics.error = null;
+
+  try {
+    const { data, error } = await supabase.from('invoices').select('amount, status, invoice_date, supplier_name').order('invoice_date', { ascending: true });
+
+    if (error) throw error;
+
+    datadb.analytics.invoices = data || [];
+  } catch (e) {
+    console.error(e);
+    datadb.analytics.error = e.message;
+  } finally {
+    datadb.analytics.loading = false;
+  }
+}
+
 export async function getInvoiceById(invoiceId) {
   if (!invoiceId) return;
 
