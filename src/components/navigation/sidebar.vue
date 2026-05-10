@@ -29,7 +29,7 @@
             <Files size="22" />
           </div>
           <Transition name="slide-fade">
-            <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Invoices</span>
+            <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Fatture</span>
           </Transition>
         </RouterLink>
         <RouterLink to="/clients" class="nav-item">
@@ -37,7 +37,7 @@
             <UsersRound size="22" />
           </div>
           <Transition name="slide-fade">
-            <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Clients</span>
+            <span v-if="!store.sidebarOptions.isCollapsed" class="nav-label">Clienti</span>
           </Transition>
         </RouterLink>
         <RouterLink v-if="false" to="/analytics" class="nav-item">

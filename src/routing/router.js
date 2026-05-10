@@ -39,7 +39,7 @@ const routes = [
     name: 'home',
     component: () => import('../views/Home.vue'),
     props: true,
-    meta: { requiresAuth: true },
+    meta: { title: 'Dashboard • Atlas', requiresAuth: true },
   },
 
   // Invoice
@@ -48,7 +48,7 @@ const routes = [
     name: 'invoices',
     component: () => import('../views/Invoices.vue'),
     props: true,
-    meta: { requiresAuth: true },
+    meta: { title: 'Fatture • Atlas', requiresAuth: true },
   },
   {
     path: '/invoice/:id',
@@ -71,7 +71,7 @@ const routes = [
     name: 'clients',
     component: () => import('../views/Clients.vue'),
     props: true,
-    meta: { requiresAuth: true },
+    meta: { title: 'Clienti • Atlas', requiresAuth: true },
   },
   {
     path: '/new-client',
@@ -101,7 +101,7 @@ const routes = [
     name: 'settings',
     component: () => import('../views/Settings/Settings.vue'),
     props: true,
-    meta: { requiresAuth: true },
+    meta: { title: 'Impostazioni • Atlas', requiresAuth: true },
   },
 
   // Error
