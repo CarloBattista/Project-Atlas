@@ -23,3 +23,24 @@ export async function updateProfileName() {
     console.error(e);
   }
 }
+
+export async function updateProfileNotifications() {
+  const profileId = auth.profile?.id;
+
+  if (!profileId) return;
+
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        settings: auth.profile.settings,
+      })
+      .eq('id', profileId);
+
+    if (error) throw error;
+
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  }
+}

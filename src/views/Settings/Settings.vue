@@ -117,18 +117,36 @@
   </modal>
   <modal modalKey="notifications" head="Notifiche" :actions="false">
     <template #body>
-      <listContainer>
-        <listItem type="big" label="Nuove fatture" description="Ricevi notifiche su nuove fatture" rightIcon="" :rightAction="true">
-          <template #rightAction>
-            <tlCheckbox />
-          </template>
-        </listItem>
-        <listItem type="big" label="Nuovo cliente" description="Ricevi notifiche su nuovi clienti" rightIcon="" :rightAction="true">
-          <template #rightAction>
-            <tlCheckbox />
-          </template>
-        </listItem>
-      </listContainer>
+      <div class="w-full flex flex-col">
+        <div class="w-full mt-5 mb-2 px-2 flex items-center text-gray-500 text-sm font-medium">Fatture</div>
+        <listContainer>
+          <listItem type="big" label="Nuove fatture" description="Ricevi notifiche su nuove fatture" rightIcon="" :rightAction="true">
+            <template #rightAction>
+              <tlCheckbox :checked="auth.profile.settings.notifications.email.invoices.new_invoice" />
+            </template>
+          </listItem>
+          <listItem type="big" label="Aggiornamenti fatture" description="Ricevi notifiche su aggiornamenti fatture" rightIcon="" :rightAction="true">
+            <template #rightAction>
+              <tlCheckbox :checked="auth.profile.settings.notifications.email.invoices.updated_invoice" />
+            </template>
+          </listItem>
+        </listContainer>
+      </div>
+      <div class="w-full flex flex-col">
+        <div class="w-full mt-5 mb-2 px-2 flex items-center text-gray-500 text-sm font-medium">Clienti</div>
+        <listContainer>
+          <listItem type="big" label="Nuovo cliente" description="Ricevi notifiche su nuovi clienti" rightIcon="" :rightAction="true">
+            <template #rightAction>
+              <tlCheckbox :checked="auth.profile.settings.notifications.email.clients.new_client" />
+            </template>
+          </listItem>
+          <listItem type="big" label="Aggiornamenti clienti" description="Ricevi notifiche su aggiornamenti clienti" rightIcon="" :rightAction="true">
+            <template #rightAction>
+              <tlCheckbox :checked="auth.profile.settings.notifications.email.clients.updated_client" />
+            </template>
+          </listItem>
+        </listContainer>
+      </div>
     </template>
   </modal>
 </template>
@@ -137,7 +155,7 @@
 import { auth } from '../../data/auth';
 import { store } from '../../data/store';
 import { getProfile, updateUserEmail, updateUserPhone, logout } from '../../lib/auth';
-import { updateProfileName } from '../../api/profiles';
+import { updateProfileName, updateProfileNotifications } from '../../api/profiles';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -251,6 +269,14 @@ export default {
         console.error(e);
       } finally {
         this.store.modals.phone.loading = false;
+      }
+    },
+    async handleUpdateNotifications() {
+      try {
+        await updateProfileNotifications();
+        await getProfile();
+      } catch (e) {
+        console.error(e);
       }
     },
     async handleLogout() {

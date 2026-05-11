@@ -32,7 +32,10 @@ export async function getInvoicesForAnalytics() {
   datadb.analytics.error = null;
 
   try {
-    const { data, error } = await supabase.from('invoices').select('amount, status, invoice_date, supplier_name').order('invoice_date', { ascending: true });
+    const { data, error } = await supabase
+      .from('invoices')
+      .select('amount, status, invoice_date, supplier_name')
+      .order('invoice_date', { ascending: true });
 
     if (error) throw error;
 
