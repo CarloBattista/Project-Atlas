@@ -161,6 +161,16 @@
           </div>
         </div>
 
+        <div class="p-6 rounded-[24px] border border-black/5 bg-white">
+          <ActivityTimeline
+            :clientId="clientId"
+            :activities="datadb.activities.data || []"
+            :hasMore="datadb.activities.hasMore"
+            :loading="datadb.activities.loading"
+            @loadMore="loadMoreActivities"
+          />
+        </div>
+
         <div v-if="datadb.client.data?.notes" class="p-6 rounded-[24px] border border-black/5 bg-white flex flex-col gap-4">
           <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Note</h3>
           <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ datadb.client.data.notes }}</p>
@@ -177,7 +187,9 @@
 <script>
 import { datadb } from '../../data/datadb';
 import { store } from '../../data/store';
+import { auth } from '../../data/auth';
 import { getClientById, deleteClientById } from '../../api/clients';
+import { getClientActivities } from '../../api/activities';
 import {
   formatCurrency,
   formatDate,
@@ -200,6 +212,7 @@ import badge from '../../components/badge/badge.vue';
 import shelf from '../../components/shelf/shelf.vue';
 import cardRow from '../../components/card/card-row.vue';
 import chip from '../../components/chip/chip.vue';
+import ActivityTimeline from '../../components/activities/activity-timeline.vue';
 
 // ICONS
 import { Mail, Phone, Globe, MapPin, Files } from '@lucide/vue';
@@ -219,6 +232,7 @@ export default {
     shelf,
     cardRow,
     chip,
+    ActivityTimeline,
 
     // ICONS
     Mail,
@@ -231,8 +245,10 @@ export default {
     return {
       datadb,
       store,
+      auth,
 
       clientId: this.$route.params.id,
+      activityPage: 1,
     };
   },
   methods: {
@@ -255,9 +271,23 @@ export default {
 
       try {
         await getClientById(this.clientId);
+        await this.getActivities();
       } catch (error) {
         console.error(error);
       }
+    },
+    async getActivities() {
+      if (!this.clientId) return;
+
+      try {
+        await getClientActivities(this.clientId, this.activityPage);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async loadMoreActivities() {
+      this.activityPage++;
+      await this.getActivities();
     },
     async handleDelete() {
       if (!confirm('Sei sicuro di voler eliminare questo cliente?')) return;
@@ -279,6 +309,13 @@ export default {
         }
       },
       immediate: true,
+    },
+    'auth.profile': {
+      handler(value) {
+        if (value && this.clientId) {
+          this.getActivities();
+        }
+      },
     },
   },
 };

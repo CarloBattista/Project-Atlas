@@ -28,4 +28,9 @@ export const datadb = reactive({
     error: null,
     loading: false,
   },
+  activities: {
+    data: [],
+    error: null,
+    loading: false,
+  },
 });
