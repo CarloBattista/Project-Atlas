@@ -21,7 +21,12 @@
               <tlInput v-model="data.form.email" label="Email" placeholder="email@esempio.com" />
               <tlInput v-model="data.form.phone" label="Telefono" placeholder="+39 012 3456789" />
             </div>
-            <tlInput v-model="data.form.website" label="Sito Web" placeholder="https://www.esempio.com" />
+            <div class="w-full flex gap-2 items-center">
+              <tlInput v-model="data.form.website" label="Sito Web" placeholder="https://www.esempio.com" class="w-full" />
+              <a :href="'https://' + data.form?.website" target="_blank" class="w-full min-w-[30%] max-w-[40%]">
+                <tlButton variant="primary" label="Visualizza sito" :disabled="!data.form.website" :loading="loading" class="w-full" />
+              </a>
+            </div>
           </div>
         </div>
 
