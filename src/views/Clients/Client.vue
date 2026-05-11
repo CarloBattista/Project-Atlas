@@ -168,6 +168,7 @@
             :hasMore="datadb.activities.hasMore"
             :loading="datadb.activities.loading"
             @loadMore="loadMoreActivities"
+            show-time
           />
         </div>
 

@@ -22,6 +22,7 @@
           :key="activity.id"
           :activity="activity"
           :is-last="index === activities.length - 1"
+          :show-time="showTime"
         />
       </div>
       <div v-if="hasMore" class="mt-4 flex justify-center">
@@ -63,6 +64,10 @@ export default {
       default: false,
     },
     loading: {
+      type: Boolean,
+      default: false,
+    },
+    showTime: {
       type: Boolean,
       default: false,
     },

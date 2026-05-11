@@ -7,7 +7,7 @@
     <div class="flex flex-col gap-1 pb-6">
       <div class="flex items-center gap-2">
         <span class="text-sm font-semibold text-black">{{ activity.title }}</span>
-        <span class="text-[10px] text-gray-400 font-medium">{{ formatDate(activity.created_at) }}</span>
+        <span class="text-[10px] text-gray-400 font-medium">{{ formatDate(activity.created_at, { includeTime: showTime }) }}</span>
       </div>
       <p v-if="activity.description" class="text-xs text-gray-500 leading-relaxed">{{ activity.description }}</p>
     </div>
@@ -28,6 +28,10 @@ export default {
       required: true,
     },
     isLast: {
+      type: Boolean,
+      default: false,
+    },
+    showTime: {
       type: Boolean,
       default: false,
     },

@@ -50,25 +50,42 @@ export function getClientStatusLabel(status) {
   }
 }
 
-export function formatDate(date) {
+export function formatDate(date, options = {}) {
+  const { includeTime = false } = options;
+
   if (!date) return '';
 
   const d = new Date(date);
   if (isNaN(d)) return '';
 
-  const parts = new Intl.DateTimeFormat('it-IT', {
+  const dateOptions = {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
-  }).formatToParts(d);
+  };
+
+  if (includeTime) {
+    dateOptions.hour = '2-digit';
+    dateOptions.minute = '2-digit';
+  }
+
+  const parts = new Intl.DateTimeFormat('it-IT', dateOptions).formatToParts(d);
 
   const day = parts.find((p) => p.type === 'day')?.value;
   let month = parts.find((p) => p.type === 'month')?.value;
   const year = parts.find((p) => p.type === 'year')?.value;
+  const hour = parts.find((p) => p.type === 'hour')?.value;
+  const minute = parts.find((p) => p.type === 'minute')?.value;
 
   month = month.charAt(0).toUpperCase() + month.slice(1);
 
-  return `${day} ${month}, ${year}`;
+  let formatted = `${day} ${month}, ${year}`;
+
+  if (includeTime && hour && minute) {
+    formatted += ` alle ${hour}:${minute}`;
+  }
+
+  return formatted;
 }
 
 export function formatCurrency(amount) {

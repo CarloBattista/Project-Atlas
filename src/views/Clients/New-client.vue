@@ -24,7 +24,7 @@
             <div class="w-full flex gap-2 items-center">
               <tlInput v-model="data.form.website" label="Sito Web" placeholder="https://www.esempio.com" class="w-full" />
               <a :href="'https://' + data.form?.website" target="_blank" class="w-full min-w-[30%] max-w-[40%]">
-                <tlButton variant="primary" label="Visualizza sito" :disabled="!data.form.website" :loading="loading" class="w-full" />
+                <tlButton variant="primary" label="Visualizza sito" :disabled="!data.form.website" :loading="data.loading" class="w-full" />
               </a>
             </div>
           </div>
@@ -73,7 +73,14 @@
 
         <!-- Azioni -->
         <div class="w-full pt-6 flex flex-col gap-2">
-          <tlButton @click="handleSave" :loading="loading" variant="primary" :label="isEdit ? 'Aggiorna Cliente' : 'Salva Cliente'" class="w-full" />
+          <tlButton
+            @click="handleSave"
+            :loading="data.loading"
+            :disabled="!isDirty"
+            variant="primary"
+            :label="isEdit ? 'Aggiorna Cliente' : 'Salva Cliente'"
+            class="w-full"
+          />
           <tlButton v-if="isEdit" @click="handleDelete" variant="tertiary" label="Elimina Cliente" class="w-full text-red-500!" />
         </div>
       </div>
@@ -149,8 +156,32 @@ export default {
       return this.$route.name === 'edit-client';
     },
     isDirty() {
-      if (this.isSaved) return false;
-      return JSON.stringify(this.data.form) !== this.initialData;
+      if (this.isSaved || !this.initialData) return false;
+
+      const currentForm = this.data.form;
+      const initialForm = JSON.parse(this.initialData);
+
+      const fields = [
+        'name',
+        'email',
+        'phone',
+        'website',
+        'company_name',
+        'vat_number',
+        'tax_code',
+        'address',
+        'city',
+        'postal_code',
+        'country',
+        'notes',
+        'status',
+      ];
+
+      return fields.some((key) => {
+        const val1 = currentForm[key] ?? '';
+        const val2 = initialForm[key] ?? '';
+        return String(val1) !== String(val2);
+      });
     },
   },
   methods: {
@@ -175,12 +206,15 @@ export default {
       }
     },
     async handleSave() {
+      if (!this.isDirty) return;
+
       if (!this.data.form.name) {
         alert('Il nome del cliente è obbligatorio');
         return;
       }
 
       this.data.loading = true;
+
       try {
         const clientData = { ...this.data.form };
         if (!this.isEdit) {
