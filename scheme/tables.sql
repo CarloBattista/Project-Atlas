@@ -73,3 +73,18 @@ create table public.clients (
   constraint clients_vat_number_key unique (vat_number),
   constraint clients_profile_id_fkey foreign KEY (profile_id) references profiles (id)
 ) TABLESPACE pg_default;
+
+create table public.activities (
+  id uuid not null default gen_random_uuid (),
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone null,
+  profile_id uuid not null,
+  type public.status_activities not null,
+  title text not null,
+  description text null,
+  entity_type text not null,
+  entity_id uuid null,
+  metadata jsonb null,
+  constraint activities_pkey primary key (id),
+  constraint activities_profile_id_fkey foreign KEY (profile_id) references profiles (id)
+) TABLESPACE pg_default;

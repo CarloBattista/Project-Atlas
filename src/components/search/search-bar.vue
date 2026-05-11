@@ -101,11 +101,7 @@
     </div>
   </Transition>
   <Transition name="fade">
-    <div
-      v-if="store.searchBar.isOpen"
-      @click="store.searchBar.isOpen = false"
-      class="fixed z-9999 top-0 left-0 w-full h-svh bg-black opacity-30"
-    ></div>
+    <div v-if="store.searchBar.isOpen" @click="closeSearch" class="fixed z-9999 top-0 left-0 w-full h-svh bg-black opacity-30"></div>
   </Transition>
 </template>
 
