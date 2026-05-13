@@ -1,7 +1,7 @@
 <template>
   <button :type="type" class="tl-button" :class="['size-' + size, 'variant-' + variant]" :disabled="disabled">
-    <span v-if="!loading && loading" class="loader"></span>
-    <component v-if="leftIcon" :is="leftIcon" class="icon-button left-icon" />
+    <span v-if="loading" class="loader"></span>
+    <component v-if="!loading && leftIcon" :is="leftIcon" class="icon-button left-icon" />
     <span v-if="!loading && label" class="label-button font-medium whitespace-nowrap">{{ label }}</span>
     <component v-if="!loading && rightIcon" :is="rightIcon" class="icon-button right-icon" />
   </button>
@@ -9,7 +9,21 @@
 
 <script>
 // ICONS
-import { Plus, Eye, EyeClosed, Pen, BanknoteArrowUp, BanknoteX, Trash2, ChevronLeft, ChevronRight, UserRound, Send } from '@lucide/vue';
+import {
+  Plus,
+  Eye,
+  EyeClosed,
+  Pen,
+  BanknoteArrowUp,
+  BanknoteX,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  UserRound,
+  Send,
+  Download,
+  Printer,
+} from '@lucide/vue';
 
 export default {
   name: 'tl-button',
@@ -26,6 +40,8 @@ export default {
     ChevronRight,
     UserRound,
     Send,
+    Download,
+    Printer,
   },
   props: {
     type: {

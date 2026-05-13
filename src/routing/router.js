@@ -64,6 +64,12 @@ const routes = [
     props: true,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/public/invoice/:id',
+    name: 'public-invoice',
+    component: () => import('../views/Invoice/Public-invoice.vue'),
+    props: true,
+  },
 
   // Clients
   {

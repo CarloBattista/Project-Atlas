@@ -2,6 +2,7 @@
  * Genera il contenuto HTML per l'email della fattura.
  * @param {Object} invoice - I dati della fattura.
  * @param {Object} client - I dati del cliente.
+ * @param {string} baseUrl - L'URL base dell'applicazione.
  * @returns {string} - Il contenuto HTML.
  */
 export function generateInvoiceEmailHtml(invoice, client) {
@@ -9,6 +10,9 @@ export function generateInvoiceEmailHtml(invoice, client) {
     style: 'currency',
     currency: 'EUR',
   }).format(invoice.amount);
+
+  const startUrl = 'http://localhost:5173';
+  const publicUrl = `${startUrl}/public/invoice/${invoice.id}`;
 
   return `
     <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
@@ -40,7 +44,7 @@ export function generateInvoiceEmailHtml(invoice, client) {
       <p>Puoi visualizzare e scaricare la fattura completa cliccando sul pulsante qui sotto:</p>
       
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${invoice.file_url}" style="background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Visualizza Fattura</a>
+        <a href="${publicUrl}" style="background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Visualizza Fattura</a>
       </div>
       
       <p style="font-size: 12px; color: #999; margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px;">
