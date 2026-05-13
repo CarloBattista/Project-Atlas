@@ -30,6 +30,7 @@
           leftIcon="BanknoteX"
           label="Segna come non pagata"
         />
+        <tlButton @click="handleSendInvoice" size="small" variant="primary" leftIcon="Send" label="Invia Fattura" :loading="sending" />
       </div>
       <div v-else-if="store.windowOptions.isMobile" class="ml-auto">
         <dropdown>
@@ -56,6 +57,7 @@
               icon="BanknoteX"
               label="Segna come non pagata"
             />
+            <dropdownItem @click="handleSendInvoice" icon="Send" label="Invia Fattura" />
           </template>
         </dropdown>
       </div>
@@ -379,8 +381,10 @@
 import { supabase } from '../../lib/supabase';
 import { datadb } from '../../data/datadb';
 import { store } from '../../data/store';
-import { getInvoices, getInvoiceById, markInvoiceAsPaidById, markInvoiceAsUnpaidById, updateInvoiceItem } from '../../api/invoices';
+import { getInvoices, getInvoiceById, markInvoiceAsPaidById, markInvoiceAsUnpaidById, updateInvoiceItem, sendInvoice } from '../../api/invoices';
 import { getInvoiceStatusVariant, getInvoiceStatusLabel, formatDate, formatCurrency } from '../../utils/format';
+import { generateInvoiceEmailHtml } from '../../utils/invoice-email';
+import { toast } from '../../utils/toast';
 
 import sidebar from '../../components/navigation/sidebar.vue';
 import mainView from '../../components/global/main-view.vue';
@@ -423,6 +427,7 @@ export default {
 
       invoiceId: this.$route.params.id,
       previewIsVisible: true,
+      sending: false,
 
       editingField: {
         invoice_date: {
@@ -522,6 +527,37 @@ export default {
       if (confirm('Sei sicuro di voler segnalare questa fattura come non pagata?')) {
         await markInvoiceAsUnpaidById(invoiceId);
         await this.getInvoice();
+      }
+    },
+    async handleSendInvoice() {
+      if (!this.invoice.data || this.sending) return;
+
+      const client = this.invoice.data.clients;
+      if (!client?.email) {
+        toast.error('Il cliente non ha un indirizzo email configurato.');
+        return;
+      }
+
+      if (!confirm(`Sei sicuro di voler inviare la fattura a ${client.email}?`)) return;
+
+      this.sending = true;
+      try {
+        const emailData = {
+          to: client.email,
+          subject: `Fattura ${this.invoice.data.supplier_number || ''} da ${this.invoice.data.supplier_name}`,
+          html: generateInvoiceEmailHtml(this.invoice.data, client),
+        };
+
+        const { error } = await sendInvoice(this.invoiceId, emailData);
+
+        if (error) throw new Error(error);
+
+        toast.success('Fattura inviata con successo!');
+      } catch (e) {
+        console.error(e);
+        toast.error('Errore durante invio della fattura.');
+      } finally {
+        this.sending = false;
       }
     },
     async handleUpdateItem() {

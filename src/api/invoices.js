@@ -56,7 +56,7 @@ export async function getInvoiceById(invoiceId) {
   datadb.invoice.data = null;
 
   try {
-    const { data, error } = await supabase.from('invoices').select('*, invoice_items(*)').eq('id', invoiceId).single();
+    const { data, error } = await supabase.from('invoices').select('*, invoice_items(*), clients(*)').eq('id', invoiceId).single();
 
     if (error) throw error;
 
@@ -160,5 +160,26 @@ export async function updateInvoiceItem(itemId, updates) {
   } catch (e) {
     console.error(e);
     return { data: null, error: e };
+  }
+}
+
+export async function sendInvoice(invoiceId, emailData) {
+  if (!invoiceId) return { error: 'ID fattura mancante' };
+
+  try {
+    const { data, error } = await supabase.functions.invoke('send-invoice', {
+      body: {
+        to: emailData.to,
+        subject: emailData.subject,
+        html: emailData.html,
+      },
+    });
+
+    if (error) throw error;
+
+    return { data, error: null };
+  } catch (e) {
+    console.error(e);
+    return { data: null, error: e.message };
   }
 }
